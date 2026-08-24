@@ -55,11 +55,25 @@ import {
   CampaignTimelineEventType
 } from '../../models/campaign-timeline.model';
 
+import {
+  PageEvent
+} from '@angular/material/paginator';
+
+import {
+  MatPaginatorModule
+} from '@angular/material/paginator';
+
+import {
+  CampaignExecution,
+  CampaignExecutionStatus
+} from '../../models/campaign-execution.model';
+
 @Component({
   selector: 'app-campaign-detail',
   imports: [
     DatePipe,
     DecimalPipe,
+    MatPaginatorModule,
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
@@ -115,6 +129,32 @@ export class CampaignDetail {
   readonly timelineError =
     signal(false);
 
+    readonly executions =
+  signal<CampaignExecution[]>([]);
+
+readonly executionsLoading =
+  signal(true);
+
+readonly executionsError =
+  signal(false);
+
+readonly executionsTotal =
+  signal(0);
+
+readonly executionsPageIndex =
+  signal(0);
+
+readonly executionsPageSize =
+  signal(10);
+
+readonly executionColumns = [
+  'id',
+  'status',
+  'patrols',
+  'startedAt',
+  'completedAt'
+];
+
   constructor() {
 
     const id =
@@ -125,6 +165,7 @@ export class CampaignDetail {
     this.loadCampaign(id);
     this.loadStatistics(id);
     this.loadTimeline(id);
+    this.loadExecutions(id);
   }
 
   private loadCampaign(
@@ -252,6 +293,70 @@ export class CampaignDetail {
         return 'timeline-amber';
 
     }
+  }
+
+  private loadExecutions(
+  campaignId: number
+): void {
+
+  this.executionsLoading.set(true);
+  this.executionsError.set(false);
+
+  this.campaignService
+    .getCampaignExecutions(
+      campaignId,
+      this.executionsPageIndex(),
+      this.executionsPageSize()
+    )
+    .subscribe({
+      next: response => {
+
+        this.executions.set(
+          response.content
+        );
+
+        this.executionsTotal.set(
+          response.totalElements
+        );
+
+        this.executionsLoading.set(false);
+      },
+
+      error: () => {
+
+        this.executionsLoading.set(false);
+        this.executionsError.set(true);
+      }
+    });
+}
+
+onExecutionPageChange(
+    event: PageEvent
+  ): void {
+
+    this.executionsPageIndex.set(
+      event.pageIndex
+    );
+
+    this.executionsPageSize.set(
+      event.pageSize
+    );
+
+    const campaignId =
+      Number(
+        this.route.snapshot.paramMap.get('id')
+      );
+
+    this.loadExecutions(
+      campaignId
+    );
+  }
+
+  executionStatusClass(
+    status: CampaignExecutionStatus
+  ): string {
+
+    return `execution-${status.toLowerCase()}`;
   }
 
 }

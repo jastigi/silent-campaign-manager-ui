@@ -29,6 +29,10 @@ import {
   CampaignTimelineEvent
 } from '../models/campaign-timeline.model';
 
+import {
+  CampaignExecution
+} from '../models/campaign-execution.model';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -102,5 +106,32 @@ export class CampaignService {
       `${this.baseUrl}/${id}/timeline`
     );
   }
+
+  getCampaignExecutions(
+    id: number,
+    page = 0,
+    size = 10
+    ): Observable<PageResponse<CampaignExecution>> {
+
+    const params =
+        new HttpParams()
+        .set(
+            'page',
+            page
+        )
+        .set(
+            'size',
+            size
+        );
+
+    return this.http.get<
+        PageResponse<CampaignExecution>
+    >(
+        `${this.baseUrl}/${id}/executions`,
+        {
+        params
+        }
+    );
+    }
 
 }
