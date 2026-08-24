@@ -33,6 +33,10 @@ import {
   CampaignExecution
 } from '../models/campaign-execution.model';
 
+import {
+  CampaignSimulationResult
+} from '../models/campaign-simulation.model';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -131,6 +135,16 @@ export class CampaignService {
         {
         params
         }
+    );
+    }
+
+  simulateCampaign(
+    id: number
+    ): Observable<CampaignSimulationResult> {
+
+    return this.http.post<CampaignSimulationResult>(
+        `${this.baseUrl}/${id}/simulate`,
+        null
     );
     }
 

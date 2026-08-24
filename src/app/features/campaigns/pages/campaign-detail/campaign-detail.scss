@@ -540,3 +540,184 @@ mat-chip.status-abandoned * {
   color: #991b1b;
   border: 1px solid #fca5a5;
 }
+
+/* =========================================================
+   Campaign Simulation
+   ========================================================= */
+
+.campaign-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.simulation-result-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  margin-top: 40px;
+}
+
+.simulation-summary-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+  gap: 24px;
+}
+
+.simulation-summary-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.simulation-label {
+  color: #667085;
+
+  font-size: 0.8rem;
+  font-weight: 700;
+
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.simulation-summary-grid strong {
+  font-size: 1.8rem;
+}
+
+.simulation-patrol-result {
+  border-left:
+    5px solid #1976d2;
+}
+
+.simulation-result-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+
+  gap: 20px;
+
+  margin-top: 16px;
+}
+
+.simulation-result-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.simulation-result-grid span {
+  color: #667085;
+
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.simulation-result-grid strong {
+  font-size: 1rem;
+}
+
+.mission-debrief {
+  margin-top: 24px;
+  padding-top: 20px;
+
+  border-top:
+    1px solid #e5e7eb;
+}
+
+.mission-debrief > span {
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-size: 0.8rem;
+  font-weight: 700;
+
+  color: #667085;
+
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mission-debrief p {
+  margin: 0;
+
+  line-height: 1.6;
+}
+
+
+@media (max-width: 1000px) {
+
+  .simulation-result-grid {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .campaign-header {
+    flex-direction: column;
+  }
+
+  .campaign-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .simulation-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .simulation-result-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+/* Mission outcome */
+
+.mission-outcome {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+
+  padding: 4px 10px;
+
+  border-radius: 6px;
+
+  font-weight: 700;
+}
+
+.mission-outcome-success {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.mission-outcome-partial {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.mission-outcome-failure {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.mission-outcome-neutral {
+  color: #475569;
+  background: #e2e8f0;
+}

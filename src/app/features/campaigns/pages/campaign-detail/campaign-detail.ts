@@ -68,11 +68,21 @@ import {
   CampaignExecutionStatus
 } from '../../models/campaign-execution.model';
 
+import {
+  MatSnackBar,
+  MatSnackBarModule
+} from '@angular/material/snack-bar';
+
+import {
+  CampaignSimulationResult
+} from '../../models/campaign-simulation.model';
+
 @Component({
   selector: 'app-campaign-detail',
   imports: [
     DatePipe,
     DecimalPipe,
+    MatSnackBarModule,
     MatPaginatorModule,
     MatButtonModule,
     MatCardModule,
@@ -94,6 +104,9 @@ export class CampaignDetail {
 
   private readonly campaignService =
     inject(CampaignService);
+
+  private readonly snackBar =
+  inject(MatSnackBar);
 
   readonly campaign =
     signal<CampaignDetails | null>(null);
@@ -132,28 +145,34 @@ export class CampaignDetail {
     readonly executions =
   signal<CampaignExecution[]>([]);
 
-readonly executionsLoading =
-  signal(true);
+  readonly executionsLoading =
+    signal(true);
 
-readonly executionsError =
-  signal(false);
+  readonly executionsError =
+    signal(false);
 
-readonly executionsTotal =
-  signal(0);
+  readonly executionsTotal =
+    signal(0);
 
-readonly executionsPageIndex =
-  signal(0);
+  readonly executionsPageIndex =
+    signal(0);
 
-readonly executionsPageSize =
-  signal(10);
+  readonly executionsPageSize =
+    signal(10);
 
-readonly executionColumns = [
-  'id',
-  'status',
-  'patrols',
-  'startedAt',
-  'completedAt'
-];
+  readonly executionColumns = [
+    'id',
+    'status',
+    'patrols',
+    'startedAt',
+    'completedAt'
+  ];
+
+  readonly simulating =
+    signal(false);
+
+  readonly simulationResult =
+    signal<CampaignSimulationResult | null>(null);
 
   constructor() {
 
@@ -218,6 +237,26 @@ readonly executionColumns = [
     }
 
     return `result-${result.toLowerCase().replace('_', '-')}`;
+  }
+
+  missionOutcomeClass(
+    outcome: string | null | undefined
+  ): string {
+
+    switch (outcome) {
+
+      case 'SUCCESS':
+        return 'mission-outcome-success';
+
+      case 'PARTIAL_SUCCESS':
+        return 'mission-outcome-partial';
+
+      case 'FAILURE':
+        return 'mission-outcome-failure';
+
+      default:
+        return 'mission-outcome-neutral';
+    }
   }
 
   private loadStatistics(
@@ -357,6 +396,103 @@ onExecutionPageChange(
   ): string {
 
     return `execution-${status.toLowerCase()}`;
+  }
+
+  runSimulation(): void {
+
+    const campaign =
+      this.campaign();
+
+    if (!campaign) {
+      return;
+    }
+
+    if (campaign.status !== 'ACTIVE') {
+      return;
+    }
+
+    const confirmed =
+      window.confirm(
+        `Run simulation for "${campaign.name}"?`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.simulating.set(true);
+
+    this.campaignService
+      .simulateCampaign(
+        campaign.id
+      )
+      .subscribe({
+        next: result => {
+
+          this.simulationResult.set(
+            result
+          );
+
+          this.simulating.set(false);
+
+          this.snackBar.open(
+            'Campaign simulation completed successfully.',
+            'Close',
+            {
+              duration: 5000
+            }
+          );
+
+          this.executionsPageIndex.set(0);
+
+          this.loadCampaign(
+            campaign.id
+          );
+
+          this.loadStatistics(
+            campaign.id
+          );
+
+          this.loadTimeline(
+            campaign.id
+          );
+
+          this.loadExecutions(
+            campaign.id
+          );
+        },
+
+        error: error => {
+
+          this.simulating.set(false);
+
+          const message =
+            error?.error?.message
+              ?? 'Campaign simulation failed.';
+
+          this.snackBar.open(
+            message,
+            'Close',
+            {
+              duration: 7000
+            }
+          );
+
+          /*
+          * Even failed simulations may generate
+          * execution-history records.
+          */
+          this.executionsPageIndex.set(0);
+
+          this.loadExecutions(
+            campaign.id
+          );
+
+          this.loadTimeline(
+            campaign.id
+          );
+        }
+      });
   }
 
 }

@@ -30,25 +30,55 @@
 
   } @else if (campaign(); as campaign) {
 
-    <div class="campaign-header">
+   <div class="campaign-header">
 
-      <div>
+        <div>
 
-        <h1>
-          {{ campaign.name }}
-        </h1>
+            <h1>
+            {{ campaign.name }}
+            </h1>
 
-        <p>
-          {{ campaign.description || 'No description available.' }}
-        </p>
+            <p>
+            {{ campaign.description || 'No description available.' }}
+            </p>
 
-      </div>
+        </div>
 
-      <mat-chip
-        [class]="statusClass(campaign.status)"
-      >
-        {{ campaign.status }}
-      </mat-chip>
+        <div class="campaign-actions">
+
+            <mat-chip
+            [class]="statusClass(campaign.status)"
+            >
+            {{ campaign.status }}
+            </mat-chip>
+
+            <button
+            mat-flat-button
+            type="button"
+            [disabled]="
+                campaign.status !== 'ACTIVE'
+                || simulating()
+            "
+            (click)="runSimulation()"
+            >
+
+            @if (simulating()) {
+
+                Running simulation...
+
+            } @else {
+
+                <mat-icon>
+                play_arrow
+                </mat-icon>
+
+                Run Simulation
+
+            }
+
+            </button>
+
+        </div>
 
     </div>
 
@@ -277,6 +307,192 @@
       </mat-card-content>
 
     </mat-card>
+
+    @if (simulationResult(); as simulation) {
+
+        <section class="simulation-result-section">
+
+            <div class="section-header">
+
+            <div>
+
+                <h2>
+                Latest Simulation Result
+                </h2>
+
+                <p>
+                Execution completed
+                {{
+                    simulation.executedAt
+                    | date:'dd MMM yyyy HH:mm'
+                }}.
+                </p>
+
+            </div>
+
+            </div>
+
+            <mat-card>
+
+            <mat-card-content>
+
+                <div class="simulation-summary-grid">
+
+                <div>
+
+                    <span class="simulation-label">
+                    Patrols
+                    </span>
+
+                    <strong>
+                    {{
+                        simulation.progress.completedPatrols
+                    }}
+                    /
+                    {{
+                        simulation.progress.totalPatrols
+                    }}
+                    </strong>
+
+                </div>
+
+                <div>
+
+                    <span class="simulation-label">
+                    Progress
+                    </span>
+
+                    <strong>
+                    {{
+                        simulation.progress.completionPercentage
+                        | number:'1.0-1'
+                    }}%
+                    </strong>
+
+                </div>
+
+                <div>
+
+                    <span class="simulation-label">
+                    Results
+                    </span>
+
+                    <strong>
+                    {{ simulation.patrolResults.length }}
+                    </strong>
+
+                </div>
+
+                </div>
+
+            </mat-card-content>
+
+            </mat-card>
+
+
+            @for (
+            result of simulation.patrolResults;
+            track $index
+            ) {
+
+            <mat-card class="simulation-patrol-result">
+
+                <mat-card-header>
+
+                <mat-card-title>
+                    {{ result.summary }}
+                </mat-card-title>
+
+                </mat-card-header>
+
+                <mat-card-content>
+
+                <div class="simulation-result-grid">
+
+                    <div>
+                    <span>Final state</span>
+                    <strong>{{ result.finalState }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Mission outcome</span>
+
+                        <strong
+                            class="mission-outcome"
+                            [class]="missionOutcomeClass(
+                            result.missionOutcome
+                            )"
+                        >
+                            {{ result.missionOutcome }}
+                        </strong>
+                    </div>
+
+                    <div>
+                    <span>Mission score</span>
+                    <strong>{{ result.missionScore }}</strong>
+                    </div>
+
+                    <div>
+                    <span>Completion date</span>
+                    <strong>
+                        {{
+                        result.completionDate
+                            | date:'dd MMM yyyy'
+                        }}
+                    </strong>
+                    </div>
+
+                    <div>
+                    <span>Contacts detected</span>
+                    <strong>
+                        {{ result.contactsDetected }}
+                    </strong>
+                    </div>
+
+                    <div>
+                    <span>Contacts lost</span>
+                    <strong>
+                        {{ result.contactsLost }}
+                    </strong>
+                    </div>
+
+                    <div>
+                    <span>Intelligence</span>
+                    <strong>
+                        {{ result.intelligenceGathered }}
+                    </strong>
+                    </div>
+
+                    <div>
+                    <span>Incidents</span>
+                    <strong>
+                        {{ result.incidents }}
+                    </strong>
+                    </div>
+
+                </div>
+
+                <div class="mission-debrief">
+
+                    <span>
+                    Mission debrief
+                    </span>
+
+                    <p>
+                    {{ result.missionDebrief }}
+                    </p>
+
+                </div>
+
+                </mat-card-content>
+
+            </mat-card>
+
+            }
+
+        </section>
+
+        }
 
 
     <!-- Campaign statistics -->
