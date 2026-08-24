@@ -349,3 +349,138 @@ mat-chip.status-abandoned * {
   }
 
 }
+
+/* =========================================================
+   Campaign Timeline
+   ========================================================= */
+
+.timeline-section {
+  margin-top: 40px;
+}
+
+.timeline-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 160px;
+}
+
+.empty-timeline {
+  margin: 0;
+  color: #667085;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timeline-event {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 16px;
+
+  min-height: 96px;
+}
+
+.timeline-event::before {
+  content: '';
+
+  position: absolute;
+  left: 9px;
+  top: 20px;
+  bottom: -20px;
+
+  width: 2px;
+
+  background: #d0d5dd;
+}
+
+.timeline-event:last-child::before {
+  display: none;
+}
+
+.timeline-marker {
+  position: relative;
+  z-index: 1;
+
+  width: 20px;
+  height: 20px;
+
+  margin-top: 4px;
+
+  border-radius: 50%;
+  border: 4px solid white;
+
+  box-shadow:
+    0 0 0 2px currentColor;
+
+  background:
+    currentColor;
+}
+
+.timeline-content {
+  padding:
+    0 0 24px;
+}
+
+.timeline-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin-bottom: 8px;
+}
+
+.timeline-type {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.timeline-meta time {
+  font-size: 0.82rem;
+  color: #667085;
+}
+
+.timeline-content p {
+  margin: 0;
+
+  color: #344054;
+}
+
+
+/* Semantic event colours */
+
+.timeline-blue {
+  color: #1976d2;
+}
+
+.timeline-green {
+  color: #2e7d32;
+}
+
+.timeline-red {
+  color: #c62828;
+}
+
+.timeline-amber {
+  color: #b7791f;
+}
+
+
+/* Responsive */
+
+@media (max-width: 700px) {
+
+  .timeline-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+}

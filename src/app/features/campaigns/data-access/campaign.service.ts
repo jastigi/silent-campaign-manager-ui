@@ -25,6 +25,10 @@ import {
   CampaignStatistics
 } from '../models/campaign-statistics.model';
 
+import {
+  CampaignTimelineEvent
+} from '../models/campaign-timeline.model';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -82,12 +86,21 @@ export class CampaignService {
   }
 
   getCampaignStatistics(
-  id: number
-): Observable<CampaignStatistics> {
+    id: number
+    ): Observable<CampaignStatistics> {
 
-  return this.http.get<CampaignStatistics>(
-    `${this.baseUrl}/${id}/statistics`
-  );
-}
+    return this.http.get<CampaignStatistics>(
+        `${this.baseUrl}/${id}/statistics`
+    );
+  }
+
+  getCampaignTimeline(
+  id: number
+  ): Observable<CampaignTimelineEvent[]> {
+
+    return this.http.get<CampaignTimelineEvent[]>(
+      `${this.baseUrl}/${id}/timeline`
+    );
+  }
 
 }

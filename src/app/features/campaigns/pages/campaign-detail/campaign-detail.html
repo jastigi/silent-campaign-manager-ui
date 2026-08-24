@@ -620,6 +620,113 @@
 
     </section>
 
+      <!-- Campaign timeline -->
+
+    <section class="timeline-section">
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>
+            Campaign Timeline
+          </h2>
+
+          <p>
+            Chronological operational events
+            recorded for this campaign.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      @if (timelineLoading()) {
+
+        <div class="timeline-loading">
+
+          <mat-spinner
+            diameter="40"
+          ></mat-spinner>
+
+        </div>
+
+      } @else if (timelineError()) {
+
+        <div class="error-state">
+          Unable to load campaign timeline.
+        </div>
+
+      } @else if (timeline().length === 0) {
+
+        <mat-card>
+
+          <mat-card-content>
+
+            <p class="empty-timeline">
+              No timeline events are available
+              for this campaign.
+            </p>
+
+          </mat-card-content>
+
+        </mat-card>
+
+      } @else {
+
+        <div class="timeline">
+
+          @for (
+            event of timeline();
+            track event.timestamp + event.description
+          ) {
+
+            <div
+              class="timeline-event"
+              [class]="timelineClass(event.type)"
+            >
+
+              <div class="timeline-marker">
+              </div>
+
+              <div class="timeline-content">
+
+                <div class="timeline-meta">
+
+                  <span class="timeline-type">
+                    {{
+                      event.type
+                        .replaceAll('_', ' ')
+                    }}
+                  </span>
+
+                  <time>
+                    {{
+                      event.timestamp
+                        | date:'dd MMM yyyy HH:mm'
+                    }}
+                  </time>
+
+                </div>
+
+                <p>
+                  {{ event.description }}
+                </p>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+      }
+
+    </section>
+
+
   }
 
 </section>

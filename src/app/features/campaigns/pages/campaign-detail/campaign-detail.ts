@@ -50,6 +50,11 @@ import {
   CampaignStatistics
 } from '../../models/campaign-statistics.model';
 
+import {
+  CampaignTimelineEvent,
+  CampaignTimelineEventType
+} from '../../models/campaign-timeline.model';
+
 @Component({
   selector: 'app-campaign-detail',
   imports: [
@@ -101,6 +106,15 @@ export class CampaignDetail {
   readonly statisticsError =
     signal(false);
 
+  readonly timeline =
+  signal<CampaignTimelineEvent[]>([]);
+
+  readonly timelineLoading =
+    signal(true);
+
+  readonly timelineError =
+    signal(false);
+
   constructor() {
 
     const id =
@@ -110,6 +124,7 @@ export class CampaignDetail {
 
     this.loadCampaign(id);
     this.loadStatistics(id);
+    this.loadTimeline(id);
   }
 
   private loadCampaign(
@@ -189,6 +204,54 @@ export class CampaignDetail {
           this.statisticsError.set(true);
         }
       });
+  }
+
+  private loadTimeline(
+    id: number
+  ): void {
+
+    this.timelineLoading.set(true);
+    this.timelineError.set(false);
+
+    this.campaignService
+      .getCampaignTimeline(id)
+      .subscribe({
+        next: timeline => {
+
+          this.timeline.set(
+            timeline
+          );
+
+          this.timelineLoading.set(false);
+        },
+
+        error: () => {
+
+          this.timelineLoading.set(false);
+          this.timelineError.set(true);
+        }
+      });
+  }
+
+  timelineClass(
+    type: CampaignTimelineEventType
+  ): string {
+
+    switch (type) {
+
+      case 'CAMPAIGN_EXECUTION_STARTED':
+        return 'timeline-blue';
+
+      case 'CAMPAIGN_EXECUTION_COMPLETED':
+        return 'timeline-green';
+
+      case 'CAMPAIGN_EXECUTION_FAILED':
+        return 'timeline-red';
+
+      case 'PATROL_COMPLETED':
+        return 'timeline-amber';
+
+    }
   }
 
 }
