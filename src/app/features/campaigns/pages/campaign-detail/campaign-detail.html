@@ -15,9 +15,11 @@
   @if (loading()) {
 
     <div class="loading-state">
+
       <mat-spinner
         diameter="48"
       ></mat-spinner>
+
     </div>
 
   } @else if (loadError()) {
@@ -31,6 +33,7 @@
     <div class="campaign-header">
 
       <div>
+
         <h1>
           {{ campaign.name }}
         </h1>
@@ -38,58 +41,74 @@
         <p>
           {{ campaign.description || 'No description available.' }}
         </p>
+
       </div>
 
-      <mat-chip [class]="statusClass(campaign.status)">
+      <mat-chip
+        [class]="statusClass(campaign.status)"
+      >
         {{ campaign.status }}
       </mat-chip>
 
     </div>
+
+
+    <!-- Campaign overview -->
 
     <div class="overview-grid">
 
       <mat-card>
 
         <mat-card-header>
+
           <mat-card-title>
             Campaign information
           </mat-card-title>
+
         </mat-card-header>
 
         <mat-card-content>
 
           <dl>
+
             <div>
               <dt>ID</dt>
               <dd>{{ campaign.id }}</dd>
             </div>
 
             <div>
+
               <dt>Start date</dt>
+
               <dd>
                 {{
                   campaign.startDate
                     | date:'dd MMM yyyy'
                 }}
               </dd>
+
             </div>
 
             <div>
               <dt>Status</dt>
               <dd>{{ campaign.status }}</dd>
             </div>
+
           </dl>
 
         </mat-card-content>
 
       </mat-card>
 
+
       <mat-card>
 
         <mat-card-header>
+
           <mat-card-title>
             Patrol summary
           </mat-card-title>
+
         </mat-card-header>
 
         <mat-card-content>
@@ -108,12 +127,17 @@
 
     </div>
 
+
+    <!-- Patrols -->
+
     <mat-card>
 
       <mat-card-header>
+
         <mat-card-title>
           Patrols
         </mat-card-title>
+
       </mat-card-header>
 
       <mat-card-content>
@@ -131,6 +155,8 @@
             mat-table
             [dataSource]="campaign.patrols"
           >
+
+            <!-- ID -->
 
             <ng-container
               matColumnDef="id"
@@ -152,6 +178,9 @@
 
             </ng-container>
 
+
+            <!-- Patrol name -->
+
             <ng-container
               matColumnDef="patrolName"
             >
@@ -171,6 +200,9 @@
               </td>
 
             </ng-container>
+
+
+            <!-- Area -->
 
             <ng-container
               matColumnDef="area"
@@ -192,6 +224,9 @@
 
             </ng-container>
 
+
+            <!-- Result -->
+
             <ng-container
               matColumnDef="result"
             >
@@ -207,15 +242,18 @@
                 mat-cell
                 *matCellDef="let patrol"
               >
+
                 <span
                   class="result-badge"
                   [class]="resultClass(patrol.result)"
                 >
                   {{ patrol.result || 'PENDING' }}
                 </span>
+
               </td>
 
             </ng-container>
+
 
             <tr
               mat-header-row
@@ -239,6 +277,348 @@
       </mat-card-content>
 
     </mat-card>
+
+
+    <!-- Campaign statistics -->
+
+    <section class="statistics-section">
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>
+            Campaign Statistics
+          </h2>
+
+          <p>
+            Operational performance and
+            campaign progress.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      @if (statisticsLoading()) {
+
+        <div class="statistics-loading">
+
+          <mat-spinner
+            diameter="40"
+          ></mat-spinner>
+
+        </div>
+
+      } @else if (statisticsError()) {
+
+        <div class="error-state">
+          Unable to load campaign statistics.
+        </div>
+
+      } @else if (statistics(); as stats) {
+
+        <!-- Main statistics -->
+
+        <div class="statistics-grid">
+
+          <mat-card
+            class="stat-card stat-neutral"
+          >
+
+            <mat-card-content>
+
+              <span class="stat-label">
+                Total Patrols
+              </span>
+
+              <strong class="stat-value">
+                {{ stats.totalPatrols }}
+              </strong>
+
+              <span class="stat-detail">
+                {{ stats.completedPatrols }}
+                completed
+              </span>
+
+            </mat-card-content>
+
+          </mat-card>
+
+
+          <mat-card
+            class="stat-card stat-blue"
+          >
+
+            <mat-card-content>
+
+              <span class="stat-label">
+                Campaign Progress
+              </span>
+
+              <strong class="stat-value">
+                {{
+                  stats.completionPercentage
+                    | number:'1.0-1'
+                }}%
+              </strong>
+
+              <span class="stat-detail">
+                {{ stats.pendingPatrols }}
+                pending
+              </span>
+
+            </mat-card-content>
+
+          </mat-card>
+
+
+          <mat-card
+            class="stat-card stat-neutral"
+          >
+
+            <mat-card-content>
+
+              <span class="stat-label">
+                Simulations
+              </span>
+
+              <strong class="stat-value">
+                {{ stats.totalSimulations }}
+              </strong>
+
+              <span class="stat-detail">
+                Total executions
+              </span>
+
+            </mat-card-content>
+
+          </mat-card>
+
+
+          <mat-card
+            class="stat-card stat-green"
+          >
+
+            <mat-card-content>
+
+              <span class="stat-label">
+                Success Rate
+              </span>
+
+              <strong class="stat-value">
+                {{
+                  stats.successRate
+                    | number:'1.0-1'
+                }}%
+              </strong>
+
+              <span class="stat-detail">
+                {{ stats.successfulSimulations }}
+                successful
+              </span>
+
+            </mat-card-content>
+
+          </mat-card>
+
+        </div>
+
+
+        <!-- Simulation results -->
+
+        <mat-card>
+
+          <mat-card-header>
+
+            <mat-card-title>
+              Simulation Results
+            </mat-card-title>
+
+          </mat-card-header>
+
+          <mat-card-content>
+
+            <div class="result-summary">
+
+              <div
+                class="result-item result-success"
+              >
+
+                <span>
+                  Success
+                </span>
+
+                <strong>
+                  {{ stats.successfulSimulations }}
+                </strong>
+
+              </div>
+
+
+              <div
+                class="result-item result-partial-success"
+              >
+
+                <span>
+                  Partial success
+                </span>
+
+                <strong>
+                  {{ stats.partialSuccessfulSimulations }}
+                </strong>
+
+              </div>
+
+
+              <div
+                class="result-item result-failure"
+              >
+
+                <span>
+                  Failure
+                </span>
+
+                <strong>
+                  {{ stats.failedSimulations }}
+                </strong>
+
+              </div>
+
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+
+        <!-- Operational statistics -->
+
+        <div class="statistics-grid">
+
+          <mat-card
+            class="stat-card stat-blue"
+          >
+
+            <mat-card-content>
+
+              <span class="stat-label">
+                Average Mission Score
+              </span>
+
+              <strong class="stat-value">
+                {{
+                  stats.averageMissionScore
+                    | number:'1.0-1'
+                }}
+              </strong>
+
+              <span class="stat-detail">
+                Mission performance
+              </span>
+
+            </mat-card-content>
+
+          </mat-card>
+
+
+          <mat-card
+            class="stat-card stat-green"
+          >
+
+            <mat-card-content>
+
+              <span class="stat-label">
+                Contacts Detected
+              </span>
+
+              <strong class="stat-value">
+                {{ stats.totalContactsDetected }}
+              </strong>
+
+              <span class="stat-detail">
+                Total detections
+              </span>
+
+            </mat-card-content>
+
+          </mat-card>
+
+
+          <mat-card
+            class="stat-card stat-neutral"
+          >
+
+            <mat-card-content>
+
+              <span class="stat-label">
+                Contacts Lost
+              </span>
+
+              <strong class="stat-value">
+                {{ stats.totalContactsLost }}
+              </strong>
+
+              <span class="stat-detail">
+                Lost contacts
+              </span>
+
+            </mat-card-content>
+
+          </mat-card>
+
+
+          <mat-card
+            class="stat-card stat-blue"
+          >
+
+            <mat-card-content>
+
+              <span class="stat-label">
+                Intelligence
+              </span>
+
+              <strong class="stat-value">
+                {{ stats.totalIntelligenceGathered }}
+              </strong>
+
+              <span class="stat-detail">
+                Intelligence gathered
+              </span>
+
+            </mat-card-content>
+
+          </mat-card>
+
+
+          <mat-card
+            class="stat-card stat-red"
+          >
+
+            <mat-card-content>
+
+              <span class="stat-label">
+                Incidents
+              </span>
+
+              <strong class="stat-value">
+                {{ stats.totalIncidents }}
+              </strong>
+
+              <span class="stat-detail">
+                Recorded incidents
+              </span>
+
+            </mat-card-content>
+
+          </mat-card>
+
+        </div>
+
+      }
+
+    </section>
 
   }
 

@@ -5,7 +5,8 @@ import {
 } from '@angular/core';
 
 import {
-  DatePipe
+  DatePipe,
+  DecimalPipe
 } from '@angular/common';
 
 import {
@@ -45,10 +46,15 @@ import {
   CampaignDetails
 } from '../../models/campaign.model';
 
+import {
+  CampaignStatistics
+} from '../../models/campaign-statistics.model';
+
 @Component({
   selector: 'app-campaign-detail',
   imports: [
     DatePipe,
+    DecimalPipe,
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
@@ -86,6 +92,15 @@ export class CampaignDetail {
     'result'
   ];
 
+  readonly statistics =
+  signal<CampaignStatistics | null>(null);
+
+  readonly statisticsLoading =
+    signal(true);
+
+  readonly statisticsError =
+    signal(false);
+
   constructor() {
 
     const id =
@@ -94,6 +109,7 @@ export class CampaignDetail {
       );
 
     this.loadCampaign(id);
+    this.loadStatistics(id);
   }
 
   private loadCampaign(
@@ -146,6 +162,33 @@ export class CampaignDetail {
     }
 
     return `result-${result.toLowerCase().replace('_', '-')}`;
+  }
+
+  private loadStatistics(
+    id: number
+  ): void {
+
+    this.statisticsLoading.set(true);
+    this.statisticsError.set(false);
+
+    this.campaignService
+      .getCampaignStatistics(id)
+      .subscribe({
+        next: statistics => {
+
+          this.statistics.set(
+            statistics
+          );
+
+          this.statisticsLoading.set(false);
+        },
+
+        error: () => {
+
+          this.statisticsLoading.set(false);
+          this.statisticsError.set(true);
+        }
+      });
   }
 
 }

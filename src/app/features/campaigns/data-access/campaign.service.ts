@@ -21,6 +21,10 @@ import {
   PageResponse
 } from '../models/page-response.model';
 
+import {
+  CampaignStatistics
+} from '../models/campaign-statistics.model';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -76,5 +80,14 @@ export class CampaignService {
       `${this.baseUrl}/${id}/details`
     );
   }
+
+  getCampaignStatistics(
+  id: number
+): Observable<CampaignStatistics> {
+
+  return this.http.get<CampaignStatistics>(
+    `${this.baseUrl}/${id}/statistics`
+  );
+}
 
 }
