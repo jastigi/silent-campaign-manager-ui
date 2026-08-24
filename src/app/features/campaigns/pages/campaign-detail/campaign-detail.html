@@ -40,7 +40,7 @@
         </p>
       </div>
 
-      <mat-chip>
+      <mat-chip [class]="statusClass(campaign.status)">
         {{ campaign.status }}
       </mat-chip>
 
@@ -207,7 +207,12 @@
                 mat-cell
                 *matCellDef="let patrol"
               >
-                {{ patrol.result || 'PENDING' }}
+                <span
+                  class="result-badge"
+                  [class]="resultClass(patrol.result)"
+                >
+                  {{ patrol.result || 'PENDING' }}
+                </span>
               </td>
 
             </ng-container>

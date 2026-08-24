@@ -123,7 +123,7 @@
             *matCellDef="let campaign"
           >
 
-            <mat-chip>
+            <mat-chip [class]="statusClass(campaign.status)">
               {{ campaign.status }}
             </mat-chip>
 

@@ -107,3 +107,55 @@ table {
   }
 
 }
+
+mat-chip.status-active {
+  background-color: #dbeafe !important;
+  color: #1e40af !important;
+  border-color: #93c5fd !important;
+}
+
+mat-chip.status-finished {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+  border-color: #86efac !important;
+}
+
+mat-chip.status-abandoned {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  border-color: #fca5a5 !important;
+}
+
+mat-chip.status-active *,
+mat-chip.status-finished *,
+mat-chip.status-abandoned * {
+  color: inherit !important;
+}
+
+.result-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.result-success {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.result-partial-success {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.result-failure {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.result-pending {
+  background-color: #e5e7eb;
+  color: #374151;
+}

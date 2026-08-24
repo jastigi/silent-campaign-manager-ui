@@ -76,3 +76,27 @@ table {
       --mat-sys-surface-container
     );
 }
+
+mat-chip.status-active {
+  background-color: #dbeafe !important;
+  color: #1e40af !important;
+  border-color: #93c5fd !important;
+}
+
+mat-chip.status-finished {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+  border-color: #86efac !important;
+}
+
+mat-chip.status-abandoned {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  border-color: #fca5a5 !important;
+}
+
+mat-chip.status-active *,
+mat-chip.status-finished *,
+mat-chip.status-abandoned * {
+  color: inherit !important;
+}

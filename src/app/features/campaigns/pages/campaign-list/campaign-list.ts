@@ -146,4 +146,11 @@ export class CampaignList {
     ]);
   }
 
+  statusClass(
+    status: Campaign['status']
+  ): string {
+
+    return `status-${status.toLowerCase()}`;
+  }
+
 }

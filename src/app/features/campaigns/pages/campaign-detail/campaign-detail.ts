@@ -130,4 +130,22 @@ export class CampaignDetail {
     ]);
   }
 
+  statusClass(
+    status: CampaignDetails['status']
+  ): string {
+
+    return `status-${status.toLowerCase()}`;
+  }
+
+  resultClass(
+    result: string | null
+  ): string {
+
+    if (!result) {
+      return 'result-pending';
+    }
+
+    return `result-${result.toLowerCase().replace('_', '-')}`;
+  }
+
 }
