@@ -1,0 +1,88 @@
+<section class="submarine-list-page">
+  <div class="page-header">
+    <div>
+      <h1>Submarines</h1>
+
+      <p>Fleet inventory and operational status.</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else if (loadError()) {
+    <div class="error-state">Unable to load submarines.</div>
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        @if (submarines().length === 0) {
+          <p class="empty-state">No submarines are currently available.</p>
+        } @else {
+          <table mat-table [dataSource]="submarines()">
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>ID</th>
+
+              <td mat-cell *matCellDef="let submarine">{{ submarine.id }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+
+              <td mat-cell *matCellDef="let submarine">
+                <strong>{{ submarine.name }}</strong>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef>Type</th>
+
+              <td mat-cell *matCellDef="let submarine">{{ submarine.type }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="submarineClass">
+              <th mat-header-cell *matHeaderCellDef>Class</th>
+
+              <td mat-cell *matCellDef="let submarine">
+                {{ submarine.submarineClass.replaceAll('_', ' ') }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="nation">
+              <th mat-header-cell *matHeaderCellDef>Nation</th>
+
+              <td mat-cell *matCellDef="let submarine">{{ submarine.nation }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="role">
+              <th mat-header-cell *matHeaderCellDef>Role</th>
+
+              <td mat-cell *matCellDef="let submarine">
+                {{ submarine.submarineRole }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+
+              <td mat-cell *matCellDef="let submarine">
+                <span class="submarine-status" [class]="statusClass(submarine.status)">
+                  {{ submarine.status }}
+                </span>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              class="submarine-row"
+              (click)="openSubmarine(row)"
+            ></tr>
+          </table>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

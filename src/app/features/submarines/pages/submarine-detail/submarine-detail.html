@@ -1,0 +1,97 @@
+<section class="submarine-detail-page">
+  <button mat-button type="button" (click)="back()">
+    <mat-icon> arrow_back </mat-icon>
+
+    Back to submarines
+  </button>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else if (loadError()) {
+    <div class="error-state">Unable to load submarine details.</div>
+  } @else if (submarine(); as submarine) {
+    <div class="submarine-header">
+      <div>
+        <span class="header-eyebrow">SUBMARINE</span>
+
+        <h1>{{ submarine.name }}</h1>
+
+        <p>{{ formatClass(submarine.submarineClass) }} · {{ submarine.nation }}</p>
+      </div>
+
+      <span class="submarine-status" [class]="statusClass(submarine.status)">
+        {{ submarine.status }}
+      </span>
+    </div>
+
+    <div class="overview-grid">
+      <mat-card class="detail-card">
+        <mat-card-header>
+          <mat-card-title>Vessel Information</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <dl class="detail-list">
+            <div>
+              <dt>ID</dt>
+
+              <dd>{{ submarine.id }}</dd>
+            </div>
+
+            <div>
+              <dt>Name</dt>
+
+              <dd>{{ submarine.name }}</dd>
+            </div>
+
+            <div>
+              <dt>Nation</dt>
+
+              <dd>{{ submarine.nation }}</dd>
+            </div>
+
+            <div>
+              <dt>Status</dt>
+
+              <dd>
+                <span class="submarine-status" [class]="statusClass(submarine.status)">
+                  {{ submarine.status }}
+                </span>
+              </dd>
+            </div>
+          </dl>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="detail-card">
+        <mat-card-header>
+          <mat-card-title>Operational Classification</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <dl class="detail-list">
+            <div>
+              <dt>Type</dt>
+
+              <dd>{{ submarine.type }}</dd>
+            </div>
+
+            <div>
+              <dt>Class</dt>
+
+              <dd>{{ formatClass(submarine.submarineClass) }}</dd>
+            </div>
+
+            <div>
+              <dt>Role</dt>
+
+              <dd>{{ submarine.submarineRole }}</dd>
+            </div>
+          </dl>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</section>
