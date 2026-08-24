@@ -13,7 +13,8 @@ import {
 } from 'rxjs';
 
 import {
-  Campaign
+  Campaign,
+  CampaignDetails
 } from '../models/campaign.model';
 
 import {
@@ -64,6 +65,15 @@ export class CampaignService {
       {
         params
       }
+    );
+  }
+
+  getCampaignDetails(
+    id: number
+  ): Observable<CampaignDetails> {
+
+    return this.http.get<CampaignDetails>(
+      `${this.baseUrl}/${id}/details`
     );
   }
 

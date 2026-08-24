@@ -1,0 +1,240 @@
+<section class="campaign-detail-page">
+
+  <button
+    mat-button
+    type="button"
+    (click)="back()"
+  >
+    <mat-icon>
+      arrow_back
+    </mat-icon>
+
+    Back to campaigns
+  </button>
+
+  @if (loading()) {
+
+    <div class="loading-state">
+      <mat-spinner
+        diameter="48"
+      ></mat-spinner>
+    </div>
+
+  } @else if (loadError()) {
+
+    <div class="error-state">
+      Unable to load campaign details.
+    </div>
+
+  } @else if (campaign(); as campaign) {
+
+    <div class="campaign-header">
+
+      <div>
+        <h1>
+          {{ campaign.name }}
+        </h1>
+
+        <p>
+          {{ campaign.description || 'No description available.' }}
+        </p>
+      </div>
+
+      <mat-chip>
+        {{ campaign.status }}
+      </mat-chip>
+
+    </div>
+
+    <div class="overview-grid">
+
+      <mat-card>
+
+        <mat-card-header>
+          <mat-card-title>
+            Campaign information
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+
+          <dl>
+            <div>
+              <dt>ID</dt>
+              <dd>{{ campaign.id }}</dd>
+            </div>
+
+            <div>
+              <dt>Start date</dt>
+              <dd>
+                {{
+                  campaign.startDate
+                    | date:'dd MMM yyyy'
+                }}
+              </dd>
+            </div>
+
+            <div>
+              <dt>Status</dt>
+              <dd>{{ campaign.status }}</dd>
+            </div>
+          </dl>
+
+        </mat-card-content>
+
+      </mat-card>
+
+      <mat-card>
+
+        <mat-card-header>
+          <mat-card-title>
+            Patrol summary
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+
+          <div class="summary-value">
+            {{ campaign.patrols.length }}
+          </div>
+
+          <div class="summary-label">
+            Patrols assigned
+          </div>
+
+        </mat-card-content>
+
+      </mat-card>
+
+    </div>
+
+    <mat-card>
+
+      <mat-card-header>
+        <mat-card-title>
+          Patrols
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+
+        @if (campaign.patrols.length === 0) {
+
+          <p>
+            No patrols are currently assigned
+            to this campaign.
+          </p>
+
+        } @else {
+
+          <table
+            mat-table
+            [dataSource]="campaign.patrols"
+          >
+
+            <ng-container
+              matColumnDef="id"
+            >
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                ID
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let patrol"
+              >
+                {{ patrol.id }}
+              </td>
+
+            </ng-container>
+
+            <ng-container
+              matColumnDef="patrolName"
+            >
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                Patrol
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let patrol"
+              >
+                {{ patrol.patrolName }}
+              </td>
+
+            </ng-container>
+
+            <ng-container
+              matColumnDef="area"
+            >
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                Area
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let patrol"
+              >
+                {{ patrol.area }}
+              </td>
+
+            </ng-container>
+
+            <ng-container
+              matColumnDef="result"
+            >
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                Result
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let patrol"
+              >
+                {{ patrol.result || 'PENDING' }}
+              </td>
+
+            </ng-container>
+
+            <tr
+              mat-header-row
+              *matHeaderRowDef="
+                displayedPatrolColumns
+              "
+            ></tr>
+
+            <tr
+              mat-row
+              *matRowDef="
+                let row;
+                columns: displayedPatrolColumns
+              "
+            ></tr>
+
+          </table>
+
+        }
+
+      </mat-card-content>
+
+    </mat-card>
+
+  }
+
+</section>

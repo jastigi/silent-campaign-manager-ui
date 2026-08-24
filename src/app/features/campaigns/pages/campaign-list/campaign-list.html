@@ -139,11 +139,13 @@
         ></tr>
 
         <tr
-          mat-row
-          *matRowDef="
-            let row;
-            columns: displayedColumns
-          "
+            mat-row
+            *matRowDef="
+                let row;
+                columns: displayedColumns
+            "
+            class="campaign-row"
+            (click)="openCampaign(row)"
         ></tr>
 
       </table>

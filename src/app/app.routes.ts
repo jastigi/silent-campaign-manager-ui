@@ -18,6 +18,10 @@ import {
   Shell
 } from './layout/shell/shell';
 
+import {
+  CampaignDetail
+} from './features/campaigns/pages/campaign-detail/campaign-detail';
+
 export const routes: Routes = [
   {
     path: 'login',
@@ -34,6 +38,10 @@ export const routes: Routes = [
         path: '',
         redirectTo: 'campaigns',
         pathMatch: 'full'
+      },
+      {
+        path: 'campaigns/:id',
+        component: CampaignDetail
       },
       {
         path: 'campaigns',

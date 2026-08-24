@@ -10,3 +10,14 @@ export interface Campaign {
   startDate: string;
   status: CampaignStatus;
 }
+
+export interface PatrolSummary {
+  id: number;
+  patrolName: string;
+  area: string;
+  result: string | null;
+}
+
+export interface CampaignDetails extends Campaign {
+  patrols: PatrolSummary[];
+}

@@ -65,3 +65,14 @@ table {
       --mat-sys-error-container
     );
 }
+
+.campaign-row {
+  cursor: pointer;
+}
+
+.campaign-row:hover {
+  background:
+    var(
+      --mat-sys-surface-container
+    );
+}

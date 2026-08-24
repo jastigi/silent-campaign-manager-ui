@@ -33,6 +33,10 @@ import {
   Campaign
 } from '../../models/campaign.model';
 
+import {
+  Router
+} from '@angular/router';
+
 @Component({
   selector: 'app-campaign-list',
   imports: [
@@ -49,6 +53,9 @@ export class CampaignList {
 
   private readonly campaignService =
     inject(CampaignService);
+
+  private readonly router =
+    inject(Router);
 
   readonly campaigns =
     signal<Campaign[]>([]);
@@ -127,6 +134,16 @@ export class CampaignList {
     );
 
     this.loadCampaigns();
+  }
+
+  openCampaign(
+    campaign: Campaign
+  ): void {
+
+    this.router.navigate([
+      '/campaigns',
+      campaign.id
+    ]);
   }
 
 }
