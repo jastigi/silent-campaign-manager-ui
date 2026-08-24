@@ -1,553 +1,305 @@
 <section class="campaign-detail-page">
-
-  <button
-    mat-button
-    type="button"
-    (click)="back()"
-  >
-    <mat-icon>
-      arrow_back
-    </mat-icon>
+  <button mat-button type="button" (click)="back()">
+    <mat-icon> arrow_back </mat-icon>
 
     Back to campaigns
   </button>
 
   @if (loading()) {
-
     <div class="loading-state">
-
-      <mat-spinner
-        diameter="48"
-      ></mat-spinner>
-
+      <mat-spinner diameter="48"></mat-spinner>
     </div>
-
   } @else if (loadError()) {
-
-    <div class="error-state">
-      Unable to load campaign details.
-    </div>
-
+    <div class="error-state">Unable to load campaign details.</div>
   } @else if (campaign(); as campaign) {
+    <div class="campaign-header">
+      <div>
+        <h1>
+          {{ campaign.name }}
+        </h1>
 
-   <div class="campaign-header">
+        <p>
+          {{ campaign.description || 'No description available.' }}
+        </p>
+      </div>
 
-        <div>
+      <div class="campaign-actions">
+        <mat-chip [class]="statusClass(campaign.status)">
+          {{ campaign.status }}
+        </mat-chip>
 
-            <h1>
-            {{ campaign.name }}
-            </h1>
+        <button
+          mat-flat-button
+          type="button"
+          [disabled]="campaign.status !== 'ACTIVE' || simulating()"
+          (click)="runSimulation()"
+        >
+          @if (simulating()) {
+            Running simulation...
+          } @else {
+            <mat-icon> play_arrow </mat-icon>
 
-            <p>
-            {{ campaign.description || 'No description available.' }}
-            </p>
-
-        </div>
-
-        <div class="campaign-actions">
-
-            <mat-chip
-            [class]="statusClass(campaign.status)"
-            >
-            {{ campaign.status }}
-            </mat-chip>
-
-            <button
-            mat-flat-button
-            type="button"
-            [disabled]="
-                campaign.status !== 'ACTIVE'
-                || simulating()
-            "
-            (click)="runSimulation()"
-            >
-
-            @if (simulating()) {
-
-                Running simulation...
-
-            } @else {
-
-                <mat-icon>
-                play_arrow
-                </mat-icon>
-
-                Run Simulation
-
-            }
-
-            </button>
-
-        </div>
-
+            Run Simulation
+          }
+        </button>
+      </div>
     </div>
-
 
     <!-- Campaign overview -->
 
     <div class="overview-grid">
-
       <mat-card>
-
         <mat-card-header>
-
-          <mat-card-title>
-            Campaign information
-          </mat-card-title>
-
+          <mat-card-title> Campaign information </mat-card-title>
         </mat-card-header>
 
         <mat-card-content>
-
           <dl>
-
             <div>
               <dt>ID</dt>
               <dd>{{ campaign.id }}</dd>
             </div>
 
             <div>
-
               <dt>Start date</dt>
 
               <dd>
-                {{
-                  campaign.startDate
-                    | date:'dd MMM yyyy'
-                }}
+                {{ campaign.startDate | date: 'dd MMM yyyy' }}
               </dd>
-
             </div>
 
             <div>
               <dt>Status</dt>
               <dd>{{ campaign.status }}</dd>
             </div>
-
           </dl>
-
         </mat-card-content>
-
       </mat-card>
 
-
       <mat-card>
-
         <mat-card-header>
-
-          <mat-card-title>
-            Patrol summary
-          </mat-card-title>
-
+          <mat-card-title> Patrol summary </mat-card-title>
         </mat-card-header>
 
         <mat-card-content>
-
           <div class="summary-value">
             {{ campaign.patrols.length }}
           </div>
 
-          <div class="summary-label">
-            Patrols assigned
-          </div>
-
+          <div class="summary-label">Patrols assigned</div>
         </mat-card-content>
-
       </mat-card>
-
     </div>
-
 
     <!-- Patrols -->
 
     <mat-card>
-
       <mat-card-header>
-
-        <mat-card-title>
-          Patrols
-        </mat-card-title>
-
+        <mat-card-title> Patrols </mat-card-title>
       </mat-card-header>
 
       <mat-card-content>
-
         @if (campaign.patrols.length === 0) {
-
-          <p>
-            No patrols are currently assigned
-            to this campaign.
-          </p>
-
+          <p>No patrols are currently assigned to this campaign.</p>
         } @else {
-
-          <table
-            mat-table
-            [dataSource]="campaign.patrols"
-          >
-
+          <table mat-table [dataSource]="campaign.patrols">
             <!-- ID -->
 
-            <ng-container
-              matColumnDef="id"
-            >
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>ID</th>
 
-              <th
-                mat-header-cell
-                *matHeaderCellDef
-              >
-                ID
-              </th>
-
-              <td
-                mat-cell
-                *matCellDef="let patrol"
-              >
+              <td mat-cell *matCellDef="let patrol">
                 {{ patrol.id }}
               </td>
-
             </ng-container>
-
 
             <!-- Patrol name -->
 
-            <ng-container
-              matColumnDef="patrolName"
-            >
+            <ng-container matColumnDef="patrolName">
+              <th mat-header-cell *matHeaderCellDef>Patrol</th>
 
-              <th
-                mat-header-cell
-                *matHeaderCellDef
-              >
-                Patrol
-              </th>
-
-              <td
-                mat-cell
-                *matCellDef="let patrol"
-              >
+              <td mat-cell *matCellDef="let patrol">
                 {{ patrol.patrolName }}
               </td>
-
             </ng-container>
-
 
             <!-- Area -->
 
-            <ng-container
-              matColumnDef="area"
-            >
+            <ng-container matColumnDef="area">
+              <th mat-header-cell *matHeaderCellDef>Area</th>
 
-              <th
-                mat-header-cell
-                *matHeaderCellDef
-              >
-                Area
-              </th>
-
-              <td
-                mat-cell
-                *matCellDef="let patrol"
-              >
+              <td mat-cell *matCellDef="let patrol">
                 {{ patrol.area }}
               </td>
-
             </ng-container>
-
 
             <!-- Result -->
 
-            <ng-container
-              matColumnDef="result"
-            >
+            <ng-container matColumnDef="result">
+              <th mat-header-cell *matHeaderCellDef>Result</th>
 
-              <th
-                mat-header-cell
-                *matHeaderCellDef
-              >
-                Result
-              </th>
-
-              <td
-                mat-cell
-                *matCellDef="let patrol"
-              >
-
-                <span
-                  class="result-badge"
-                  [class]="resultClass(patrol.result)"
-                >
+              <td mat-cell *matCellDef="let patrol">
+                <span class="result-badge" [class]="resultClass(patrol.result)">
                   {{ patrol.result || 'PENDING' }}
                 </span>
-
               </td>
-
             </ng-container>
 
+            <tr mat-header-row *matHeaderRowDef="displayedPatrolColumns"></tr>
 
-            <tr
-              mat-header-row
-              *matHeaderRowDef="
-                displayedPatrolColumns
-              "
-            ></tr>
-
-            <tr
-              mat-row
-              *matRowDef="
-                let row;
-                columns: displayedPatrolColumns
-              "
-            ></tr>
-
+            <tr mat-row *matRowDef="let row; columns: displayedPatrolColumns"></tr>
           </table>
-
         }
-
       </mat-card-content>
-
     </mat-card>
 
     @if (simulationResult(); as simulation) {
+      <section class="simulation-result-section">
+        <div class="section-header">
+          <div>
+            <h2>Latest Simulation Result</h2>
 
-        <section class="simulation-result-section">
+            <p>
+              Execution completed
+              {{ simulation.executedAt | date: 'dd MMM yyyy HH:mm' }}.
+            </p>
+          </div>
+        </div>
 
-            <div class="section-header">
+        <mat-card>
+          <mat-card-content>
+            <div class="simulation-summary-grid">
+              <div>
+                <span class="simulation-label"> Patrols </span>
 
-            <div>
+                <strong>
+                  {{ simulation.progress.completedPatrols }}
+                  /
+                  {{ simulation.progress.totalPatrols }}
+                </strong>
+              </div>
 
-                <h2>
-                Latest Simulation Result
-                </h2>
+              <div>
+                <span class="simulation-label"> Progress </span>
 
-                <p>
-                Execution completed
-                {{
-                    simulation.executedAt
-                    | date:'dd MMM yyyy HH:mm'
-                }}.
-                </p>
+                <strong> {{ simulation.progress.completionPercentage | number: '1.0-1' }}% </strong>
+              </div>
 
+              <div>
+                <span class="simulation-label"> Results </span>
+
+                <strong>
+                  {{ simulation.patrolResults.length }}
+                </strong>
+              </div>
             </div>
+          </mat-card-content>
+        </mat-card>
 
-            </div>
-
-            <mat-card>
+        @for (result of simulation.patrolResults; track $index) {
+          <mat-card class="simulation-patrol-result">
+            <mat-card-header>
+              <mat-card-title>
+                {{ result.summary }}
+              </mat-card-title>
+            </mat-card-header>
 
             <mat-card-content>
-
-                <div class="simulation-summary-grid">
-
+              <div class="simulation-result-grid">
                 <div>
-
-                    <span class="simulation-label">
-                    Patrols
-                    </span>
-
-                    <strong>
-                    {{
-                        simulation.progress.completedPatrols
-                    }}
-                    /
-                    {{
-                        simulation.progress.totalPatrols
-                    }}
-                    </strong>
-
+                  <span>Final state</span>
+                  <strong>{{ result.finalState }}</strong>
                 </div>
 
                 <div>
+                  <span>Mission outcome</span>
 
-                    <span class="simulation-label">
-                    Progress
-                    </span>
-
-                    <strong>
-                    {{
-                        simulation.progress.completionPercentage
-                        | number:'1.0-1'
-                    }}%
-                    </strong>
-
+                  <strong
+                    class="mission-outcome"
+                    [class]="missionOutcomeClass(result.missionOutcome)"
+                  >
+                    {{ result.missionOutcome }}
+                  </strong>
                 </div>
 
                 <div>
-
-                    <span class="simulation-label">
-                    Results
-                    </span>
-
-                    <strong>
-                    {{ simulation.patrolResults.length }}
-                    </strong>
-
+                  <span>Mission score</span>
+                  <strong>{{ result.missionScore }}</strong>
                 </div>
 
+                <div>
+                  <span>Completion date</span>
+                  <strong>
+                    {{ result.completionDate | date: 'dd MMM yyyy' }}
+                  </strong>
                 </div>
 
+                <div>
+                  <span>Contacts detected</span>
+                  <strong>
+                    {{ result.contactsDetected }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>Contacts lost</span>
+                  <strong>
+                    {{ result.contactsLost }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>Intelligence</span>
+                  <strong>
+                    {{ result.intelligenceGathered }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>Incidents</span>
+                  <strong>
+                    {{ result.incidents }}
+                  </strong>
+                </div>
+              </div>
+
+              <div class="mission-debrief">
+                <span> Mission debrief </span>
+
+                <p>
+                  {{ result.missionDebrief }}
+                </p>
+              </div>
             </mat-card-content>
-
-            </mat-card>
-
-
-            @for (
-            result of simulation.patrolResults;
-            track $index
-            ) {
-
-            <mat-card class="simulation-patrol-result">
-
-                <mat-card-header>
-
-                <mat-card-title>
-                    {{ result.summary }}
-                </mat-card-title>
-
-                </mat-card-header>
-
-                <mat-card-content>
-
-                <div class="simulation-result-grid">
-
-                    <div>
-                    <span>Final state</span>
-                    <strong>{{ result.finalState }}</strong>
-                    </div>
-
-                    <div>
-                        <span>Mission outcome</span>
-
-                        <strong
-                            class="mission-outcome"
-                            [class]="missionOutcomeClass(
-                            result.missionOutcome
-                            )"
-                        >
-                            {{ result.missionOutcome }}
-                        </strong>
-                    </div>
-
-                    <div>
-                    <span>Mission score</span>
-                    <strong>{{ result.missionScore }}</strong>
-                    </div>
-
-                    <div>
-                    <span>Completion date</span>
-                    <strong>
-                        {{
-                        result.completionDate
-                            | date:'dd MMM yyyy'
-                        }}
-                    </strong>
-                    </div>
-
-                    <div>
-                    <span>Contacts detected</span>
-                    <strong>
-                        {{ result.contactsDetected }}
-                    </strong>
-                    </div>
-
-                    <div>
-                    <span>Contacts lost</span>
-                    <strong>
-                        {{ result.contactsLost }}
-                    </strong>
-                    </div>
-
-                    <div>
-                    <span>Intelligence</span>
-                    <strong>
-                        {{ result.intelligenceGathered }}
-                    </strong>
-                    </div>
-
-                    <div>
-                    <span>Incidents</span>
-                    <strong>
-                        {{ result.incidents }}
-                    </strong>
-                    </div>
-
-                </div>
-
-                <div class="mission-debrief">
-
-                    <span>
-                    Mission debrief
-                    </span>
-
-                    <p>
-                    {{ result.missionDebrief }}
-                    </p>
-
-                </div>
-
-                </mat-card-content>
-
-            </mat-card>
-
-            }
-
-        </section>
-
+          </mat-card>
         }
-
+      </section>
+    }
 
     <!-- Campaign statistics -->
 
     <section class="statistics-section">
-
       <div class="section-header">
-
         <div>
+          <h2>Campaign Statistics</h2>
 
-          <h2>
-            Campaign Statistics
-          </h2>
-
-          <p>
-            Operational performance and
-            campaign progress.
-          </p>
-
+          <p>Operational performance and campaign progress.</p>
         </div>
-
       </div>
 
-
       @if (statisticsLoading()) {
-
         <div class="statistics-loading">
-
-          <mat-spinner
-            diameter="40"
-          ></mat-spinner>
-
+          <mat-spinner diameter="40"></mat-spinner>
         </div>
-
       } @else if (statisticsError()) {
-
-        <div class="error-state">
-          Unable to load campaign statistics.
-        </div>
-
+        <div class="error-state">Unable to load campaign statistics.</div>
       } @else if (statistics(); as stats) {
-
         <!-- Main statistics -->
 
         <div class="statistics-grid">
-
-          <mat-card
-            class="stat-card stat-neutral"
-          >
-
+          <mat-card class="stat-card stat-neutral">
             <mat-card-content>
-
-              <span class="stat-label">
-                Total Patrols
-              </span>
+              <span class="stat-label"> Total Patrols </span>
 
               <strong class="stat-value">
                 {{ stats.totalPatrols }}
@@ -557,633 +309,303 @@
                 {{ stats.completedPatrols }}
                 completed
               </span>
-
             </mat-card-content>
-
           </mat-card>
 
-
-          <mat-card
-            class="stat-card stat-blue"
-          >
-
+          <mat-card class="stat-card stat-blue">
             <mat-card-content>
-
-              <span class="stat-label">
-                Campaign Progress
-              </span>
+              <span class="stat-label"> Campaign Progress </span>
 
               <strong class="stat-value">
-                {{
-                  stats.completionPercentage
-                    | number:'1.0-1'
-                }}%
+                {{ stats.completionPercentage | number: '1.0-1' }}%
               </strong>
 
               <span class="stat-detail">
                 {{ stats.pendingPatrols }}
                 pending
               </span>
-
             </mat-card-content>
-
           </mat-card>
 
-
-          <mat-card
-            class="stat-card stat-neutral"
-          >
-
+          <mat-card class="stat-card stat-neutral">
             <mat-card-content>
-
-              <span class="stat-label">
-                Simulations
-              </span>
+              <span class="stat-label"> Simulations </span>
 
               <strong class="stat-value">
                 {{ stats.totalSimulations }}
               </strong>
 
-              <span class="stat-detail">
-                Total executions
-              </span>
-
+              <span class="stat-detail"> Total executions </span>
             </mat-card-content>
-
           </mat-card>
 
-
-          <mat-card
-            class="stat-card stat-green"
-          >
-
+          <mat-card class="stat-card stat-green">
             <mat-card-content>
+              <span class="stat-label"> Success Rate </span>
 
-              <span class="stat-label">
-                Success Rate
-              </span>
-
-              <strong class="stat-value">
-                {{
-                  stats.successRate
-                    | number:'1.0-1'
-                }}%
-              </strong>
+              <strong class="stat-value"> {{ stats.successRate | number: '1.0-1' }}% </strong>
 
               <span class="stat-detail">
                 {{ stats.successfulSimulations }}
                 successful
               </span>
-
             </mat-card-content>
-
           </mat-card>
-
         </div>
-
 
         <!-- Simulation results -->
 
         <mat-card>
-
           <mat-card-header>
-
-            <mat-card-title>
-              Simulation Results
-            </mat-card-title>
-
+            <mat-card-title> Simulation Results </mat-card-title>
           </mat-card-header>
 
           <mat-card-content>
-
             <div class="result-summary">
-
-              <div
-                class="result-item result-success"
-              >
-
-                <span>
-                  Success
-                </span>
+              <div class="result-item result-success">
+                <span> Success </span>
 
                 <strong>
                   {{ stats.successfulSimulations }}
                 </strong>
-
               </div>
 
-
-              <div
-                class="result-item result-partial-success"
-              >
-
-                <span>
-                  Partial success
-                </span>
+              <div class="result-item result-partial-success">
+                <span> Partial success </span>
 
                 <strong>
                   {{ stats.partialSuccessfulSimulations }}
                 </strong>
-
               </div>
 
-
-              <div
-                class="result-item result-failure"
-              >
-
-                <span>
-                  Failure
-                </span>
+              <div class="result-item result-failure">
+                <span> Failure </span>
 
                 <strong>
                   {{ stats.failedSimulations }}
                 </strong>
-
               </div>
-
             </div>
-
           </mat-card-content>
-
         </mat-card>
-
 
         <!-- Operational statistics -->
 
         <div class="statistics-grid">
-
-          <mat-card
-            class="stat-card stat-blue"
-          >
-
+          <mat-card class="stat-card stat-blue">
             <mat-card-content>
-
-              <span class="stat-label">
-                Average Mission Score
-              </span>
+              <span class="stat-label"> Average Mission Score </span>
 
               <strong class="stat-value">
-                {{
-                  stats.averageMissionScore
-                    | number:'1.0-1'
-                }}
+                {{ stats.averageMissionScore | number: '1.0-1' }}
               </strong>
 
-              <span class="stat-detail">
-                Mission performance
-              </span>
-
+              <span class="stat-detail"> Mission performance </span>
             </mat-card-content>
-
           </mat-card>
 
-
-          <mat-card
-            class="stat-card stat-green"
-          >
-
+          <mat-card class="stat-card stat-green">
             <mat-card-content>
-
-              <span class="stat-label">
-                Contacts Detected
-              </span>
+              <span class="stat-label"> Contacts Detected </span>
 
               <strong class="stat-value">
                 {{ stats.totalContactsDetected }}
               </strong>
 
-              <span class="stat-detail">
-                Total detections
-              </span>
-
+              <span class="stat-detail"> Total detections </span>
             </mat-card-content>
-
           </mat-card>
 
-
-          <mat-card
-            class="stat-card stat-neutral"
-          >
-
+          <mat-card class="stat-card stat-neutral">
             <mat-card-content>
-
-              <span class="stat-label">
-                Contacts Lost
-              </span>
+              <span class="stat-label"> Contacts Lost </span>
 
               <strong class="stat-value">
                 {{ stats.totalContactsLost }}
               </strong>
 
-              <span class="stat-detail">
-                Lost contacts
-              </span>
-
+              <span class="stat-detail"> Lost contacts </span>
             </mat-card-content>
-
           </mat-card>
 
-
-          <mat-card
-            class="stat-card stat-blue"
-          >
-
+          <mat-card class="stat-card stat-blue">
             <mat-card-content>
-
-              <span class="stat-label">
-                Intelligence
-              </span>
+              <span class="stat-label"> Intelligence </span>
 
               <strong class="stat-value">
                 {{ stats.totalIntelligenceGathered }}
               </strong>
 
-              <span class="stat-detail">
-                Intelligence gathered
-              </span>
-
+              <span class="stat-detail"> Intelligence gathered </span>
             </mat-card-content>
-
           </mat-card>
 
-
-          <mat-card
-            class="stat-card stat-red"
-          >
-
+          <mat-card class="stat-card stat-red">
             <mat-card-content>
-
-              <span class="stat-label">
-                Incidents
-              </span>
+              <span class="stat-label"> Incidents </span>
 
               <strong class="stat-value">
                 {{ stats.totalIncidents }}
               </strong>
 
-              <span class="stat-detail">
-                Recorded incidents
-              </span>
-
+              <span class="stat-detail"> Recorded incidents </span>
             </mat-card-content>
-
           </mat-card>
-
         </div>
-
       }
-
     </section>
 
-      <!-- Campaign timeline -->
+    <!-- Campaign timeline -->
 
     <section class="timeline-section">
-
       <div class="section-header">
-
         <div>
+          <h2>Campaign Timeline</h2>
 
-          <h2>
-            Campaign Timeline
-          </h2>
-
-          <p>
-            Chronological operational events
-            recorded for this campaign.
-          </p>
-
+          <p>Chronological operational events recorded for this campaign.</p>
         </div>
-
       </div>
 
-
       @if (timelineLoading()) {
-
         <div class="timeline-loading">
-
-          <mat-spinner
-            diameter="40"
-          ></mat-spinner>
-
+          <mat-spinner diameter="40"></mat-spinner>
         </div>
-
       } @else if (timelineError()) {
-
-        <div class="error-state">
-          Unable to load campaign timeline.
-        </div>
-
+        <div class="error-state">Unable to load campaign timeline.</div>
       } @else if (timeline().length === 0) {
-
         <mat-card>
-
           <mat-card-content>
-
-            <p class="empty-timeline">
-              No timeline events are available
-              for this campaign.
-            </p>
-
+            <p class="empty-timeline">No timeline events are available for this campaign.</p>
           </mat-card-content>
-
         </mat-card>
-
       } @else {
-
         <div class="timeline">
-
-          @for (
-            event of timeline();
-            track event.timestamp + event.description
-          ) {
-
-            <div
-              class="timeline-event"
-              [class]="timelineClass(event.type)"
-            >
-
-              <div class="timeline-marker">
-              </div>
+          @for (event of timeline(); track event.timestamp + event.description) {
+            <div class="timeline-event" [class]="timelineClass(event.type)">
+              <div class="timeline-marker"></div>
 
               <div class="timeline-content">
-
                 <div class="timeline-meta">
-
                   <span class="timeline-type">
-                    {{
-                      event.type
-                        .replaceAll('_', ' ')
-                    }}
+                    {{ event.type.replaceAll('_', ' ') }}
                   </span>
 
                   <time>
-                    {{
-                      event.timestamp
-                        | date:'dd MMM yyyy HH:mm'
-                    }}
+                    {{ event.timestamp | date: 'dd MMM yyyy HH:mm' }}
                   </time>
-
                 </div>
 
                 <p>
                   {{ event.description }}
                 </p>
-
               </div>
-
             </div>
-
           }
-
         </div>
-
       }
-
     </section>
 
-     <!-- Campaign execution history -->
+    <!-- Campaign execution history -->
 
     <section class="execution-history-section">
-
       <div class="section-header">
-
         <div>
+          <h2>Execution History</h2>
 
-          <h2>
-            Execution History
-          </h2>
-
-          <p>
-            Recorded campaign simulation executions.
-          </p>
-
+          <p>Recorded campaign simulation executions.</p>
         </div>
-
       </div>
 
       @if (executionsLoading()) {
-
         <div class="execution-loading">
-
-          <mat-spinner
-            diameter="40"
-          ></mat-spinner>
-
+          <mat-spinner diameter="40"></mat-spinner>
         </div>
-
       } @else if (executionsError()) {
-
-        <div class="error-state">
-          Unable to load campaign execution history.
-        </div>
-
+        <div class="error-state">Unable to load campaign execution history.</div>
       } @else if (executions().length === 0) {
-
         <mat-card>
-
           <mat-card-content>
-
-            <p class="empty-executions">
-              No campaign executions are available.
-            </p>
-
+            <p class="empty-executions">No campaign executions are available.</p>
           </mat-card-content>
-
         </mat-card>
-
       } @else {
-
         <mat-card>
-
           <mat-card-content>
-
-            <table
-              mat-table
-              [dataSource]="executions()"
-            >
-
+            <table mat-table [dataSource]="executions()">
               <!-- ID -->
 
-              <ng-container
-                matColumnDef="id"
-              >
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef>ID</th>
 
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                >
-                  ID
-                </th>
-
-                <td
-                  mat-cell
-                  *matCellDef="let execution"
-                >
+                <td mat-cell *matCellDef="let execution">
                   {{ execution.id }}
                 </td>
-
               </ng-container>
-
 
               <!-- Status -->
 
-              <ng-container
-                matColumnDef="status"
-              >
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
 
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                >
-                  Status
-                </th>
-
-                <td
-                  mat-cell
-                  *matCellDef="let execution"
-                >
-
-                  <span
-                    class="execution-status"
-                    [class]="executionStatusClass(execution.status)"
-                  >
+                <td mat-cell *matCellDef="let execution">
+                  <span class="execution-status" [class]="executionStatusClass(execution.status)">
                     {{ execution.status }}
                   </span>
-
                 </td>
-
               </ng-container>
-
 
               <!-- Patrols -->
 
-              <ng-container
-                matColumnDef="patrols"
-              >
+              <ng-container matColumnDef="patrols">
+                <th mat-header-cell *matHeaderCellDef>Patrols</th>
 
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                >
-                  Patrols
-                </th>
-
-                <td
-                  mat-cell
-                  *matCellDef="let execution"
-                >
-                  {{
-                    execution.completedPatrols
-                  }}
+                <td mat-cell *matCellDef="let execution">
+                  {{ execution.completedPatrols }}
                   /
-                  {{
-                    execution.totalPatrols
-                  }}
+                  {{ execution.totalPatrols }}
                 </td>
-
               </ng-container>
-
 
               <!-- Started -->
 
-              <ng-container
-                matColumnDef="startedAt"
-              >
+              <ng-container matColumnDef="startedAt">
+                <th mat-header-cell *matHeaderCellDef>Started</th>
 
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                >
-                  Started
-                </th>
-
-                <td
-                  mat-cell
-                  *matCellDef="let execution"
-                >
-                  {{
-                    execution.startedAt
-                      | date:'dd MMM yyyy HH:mm'
-                  }}
+                <td mat-cell *matCellDef="let execution">
+                  {{ execution.startedAt | date: 'dd MMM yyyy HH:mm' }}
                 </td>
-
               </ng-container>
-
 
               <!-- Completed -->
 
-              <ng-container
-                matColumnDef="completedAt"
-              >
+              <ng-container matColumnDef="completedAt">
+                <th mat-header-cell *matHeaderCellDef>Completed</th>
 
-                <th
-                  mat-header-cell
-                  *matHeaderCellDef
-                >
-                  Completed
-                </th>
-
-                <td
-                  mat-cell
-                  *matCellDef="let execution"
-                >
+                <td mat-cell *matCellDef="let execution">
                   @if (execution.completedAt) {
-
-                    {{
-                      execution.completedAt
-                        | date:'dd MMM yyyy HH:mm'
-                    }}
-
+                    {{ execution.completedAt | date: 'dd MMM yyyy HH:mm' }}
                   } @else {
-
                     —
-
                   }
                 </td>
-
               </ng-container>
 
+              <tr mat-header-row *matHeaderRowDef="executionColumns"></tr>
 
-              <tr
-                mat-header-row
-                *matHeaderRowDef="
-                  executionColumns
-                "
-              ></tr>
-
-              <tr
-                mat-row
-                *matRowDef="
-                  let row;
-                  columns: executionColumns
-                "
-              ></tr>
-
+              <tr mat-row *matRowDef="let row; columns: executionColumns"></tr>
             </table>
 
             <mat-paginator
               [length]="executionsTotal()"
               [pageIndex]="executionsPageIndex()"
               [pageSize]="executionsPageSize()"
-              [pageSizeOptions]="[
-                5,
-                10,
-                25
-              ]"
+              [pageSizeOptions]="[5, 10, 25]"
               (page)="onExecutionPageChange($event)"
             >
             </mat-paginator>
-
           </mat-card-content>
-
         </mat-card>
-
       }
-
     </section>
-
-
   }
-
 </section>

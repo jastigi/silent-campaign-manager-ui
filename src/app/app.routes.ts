@@ -1,56 +1,42 @@
-import {
-  Routes
-} from '@angular/router';
+import { Routes } from '@angular/router';
 
-import {
-  authGuard
-} from './core/auth/auth.guard';
+import { authGuard } from './core/auth/auth.guard';
 
-import {
-  Login
-} from './features/auth/pages/login/login';
+import { Login } from './features/auth/pages/login/login';
 
-import {
-  CampaignList
-} from './features/campaigns/pages/campaign-list/campaign-list';
+import { CampaignList } from './features/campaigns/pages/campaign-list/campaign-list';
 
-import {
-  Shell
-} from './layout/shell/shell';
+import { Shell } from './layout/shell/shell';
 
-import {
-  CampaignDetail
-} from './features/campaigns/pages/campaign-detail/campaign-detail';
+import { CampaignDetail } from './features/campaigns/pages/campaign-detail/campaign-detail';
 
 export const routes: Routes = [
   {
     path: 'login',
-    component: Login
+    component: Login,
   },
   {
     path: '',
     component: Shell,
-    canActivate: [
-      authGuard
-    ],
+    canActivate: [authGuard],
     children: [
       {
         path: '',
         redirectTo: 'campaigns',
-        pathMatch: 'full'
+        pathMatch: 'full',
       },
       {
         path: 'campaigns/:id',
-        component: CampaignDetail
+        component: CampaignDetail,
       },
       {
         path: 'campaigns',
-        component: CampaignList
-      }
-    ]
+        component: CampaignList,
+      },
+    ],
   },
   {
     path: '**',
-    redirectTo: ''
-  }
+    redirectTo: '',
+  },
 ];

@@ -17,22 +17,14 @@
 }
 
 .campaign-header p {
-  margin:
-    8px 0 0;
+  margin: 8px 0 0;
 
-  color:
-    var(
-      --mat-sys-on-surface-variant
-    );
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .overview-grid {
   display: grid;
-  grid-template-columns:
-    repeat(
-      2,
-      minmax(0, 1fr)
-    );
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
 
@@ -42,12 +34,10 @@ dl {
 
 dl div {
   display: grid;
-  grid-template-columns:
-    140px 1fr;
+  grid-template-columns: 140px 1fr;
   gap: 16px;
 
-  padding:
-    8px 0;
+  padding: 8px 0;
 }
 
 dt {
@@ -66,10 +56,7 @@ dd {
 }
 
 .summary-label {
-  color:
-    var(
-      --mat-sys-on-surface-variant
-    );
+  color: var(--mat-sys-on-surface-variant);
 }
 
 table {
@@ -87,25 +74,15 @@ table {
 
   border-radius: 12px;
 
-  color:
-    var(
-      --mat-sys-error
-    );
+  color: var(--mat-sys-error);
 
-  background:
-    var(
-      --mat-sys-error-container
-    );
+  background: var(--mat-sys-error-container);
 }
 
-@media (
-  max-width: 900px
-) {
-
+@media (max-width: 900px) {
   .overview-grid {
     grid-template-columns: 1fr;
   }
-
 }
 
 mat-chip.status-active {
@@ -183,7 +160,6 @@ mat-chip.status-abandoned * {
   }
 }
 
-
 /* Main statistics grid */
 
 .statistics-grid {
@@ -192,7 +168,6 @@ mat-chip.status-abandoned * {
   gap: 18px;
   margin-bottom: 24px;
 }
-
 
 /* Individual statistic card */
 
@@ -209,7 +184,6 @@ mat-chip.status-abandoned * {
     padding: 22px !important;
   }
 }
-
 
 /* Statistic text */
 
@@ -239,7 +213,6 @@ mat-chip.status-abandoned * {
   color: #667085;
 }
 
-
 /* Semantic card accents */
 
 .stat-neutral {
@@ -257,7 +230,6 @@ mat-chip.status-abandoned * {
 .stat-red {
   border-left: 5px solid #c62828;
 }
-
 
 /* =========================================================
    Simulation Results
@@ -291,7 +263,6 @@ mat-chip.status-abandoned * {
   }
 }
 
-
 /* Same semantic colour language used elsewhere */
 
 .result-success {
@@ -312,7 +283,6 @@ mat-chip.status-abandoned * {
   border: 1px solid #ef9a9a;
 }
 
-
 /* =========================================================
    Loading
    ========================================================= */
@@ -324,22 +294,17 @@ mat-chip.status-abandoned * {
   min-height: 160px;
 }
 
-
 /* =========================================================
    Responsive
    ========================================================= */
 
 @media (max-width: 1100px) {
-
   .statistics-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
 }
 
-
 @media (max-width: 700px) {
-
   .statistics-grid {
     grid-template-columns: 1fr;
   }
@@ -347,7 +312,6 @@ mat-chip.status-abandoned * {
   .result-summary {
     grid-template-columns: 1fr;
   }
-
 }
 
 /* =========================================================
@@ -415,16 +379,13 @@ mat-chip.status-abandoned * {
   border-radius: 50%;
   border: 4px solid white;
 
-  box-shadow:
-    0 0 0 2px currentColor;
+  box-shadow: 0 0 0 2px currentColor;
 
-  background:
-    currentColor;
+  background: currentColor;
 }
 
 .timeline-content {
-  padding:
-    0 0 24px;
+  padding: 0 0 24px;
 }
 
 .timeline-meta {
@@ -453,7 +414,6 @@ mat-chip.status-abandoned * {
   color: #344054;
 }
 
-
 /* Semantic event colours */
 
 .timeline-blue {
@@ -472,17 +432,14 @@ mat-chip.status-abandoned * {
   color: #b7791f;
 }
 
-
 /* Responsive */
 
 @media (max-width: 700px) {
-
   .timeline-meta {
     align-items: flex-start;
     flex-direction: column;
     gap: 4px;
   }
-
 }
 
 /* =========================================================
@@ -519,7 +476,6 @@ mat-chip.status-abandoned * {
   font-size: 0.78rem;
   font-weight: 700;
 }
-
 
 /* Status semantic colours */
 
@@ -561,11 +517,7 @@ mat-chip.status-abandoned * {
 
 .simulation-summary-grid {
   display: grid;
-  grid-template-columns:
-    repeat(
-      3,
-      minmax(0, 1fr)
-    );
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
 }
 
@@ -590,17 +542,12 @@ mat-chip.status-abandoned * {
 }
 
 .simulation-patrol-result {
-  border-left:
-    5px solid #1976d2;
+  border-left: 5px solid #1976d2;
 }
 
 .simulation-result-grid {
   display: grid;
-  grid-template-columns:
-    repeat(
-      4,
-      minmax(0, 1fr)
-    );
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 
   gap: 20px;
 
@@ -628,8 +575,7 @@ mat-chip.status-abandoned * {
   margin-top: 24px;
   padding-top: 20px;
 
-  border-top:
-    1px solid #e5e7eb;
+  border-top: 1px solid #e5e7eb;
 }
 
 .mission-debrief > span {
@@ -652,22 +598,13 @@ mat-chip.status-abandoned * {
   line-height: 1.6;
 }
 
-
 @media (max-width: 1000px) {
-
   .simulation-result-grid {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
 }
 
-
 @media (max-width: 700px) {
-
   .campaign-header {
     flex-direction: column;
   }
@@ -684,7 +621,6 @@ mat-chip.status-abandoned * {
   .simulation-result-grid {
     grid-template-columns: 1fr;
   }
-
 }
 
 /* Mission outcome */

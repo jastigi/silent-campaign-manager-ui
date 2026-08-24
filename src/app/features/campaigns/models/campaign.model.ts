@@ -1,7 +1,4 @@
-export type CampaignStatus =
-  | 'ACTIVE'
-  | 'FINISHED'
-  | 'ABANDONED';
+export type CampaignStatus = 'ACTIVE' | 'FINISHED' | 'ABANDONED';
 
 export interface Campaign {
   id: number;

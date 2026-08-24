@@ -1,7 +1,4 @@
-export type CampaignExecutionStatus =
-  | 'RUNNING'
-  | 'COMPLETED'
-  | 'FAILED';
+export type CampaignExecutionStatus = 'RUNNING' | 'COMPLETED' | 'FAILED';
 
 export interface CampaignExecution {
   id: number;

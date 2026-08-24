@@ -6,14 +6,8 @@ import { Sidebar } from '../sidebar/sidebar';
 
 @Component({
   selector: 'app-shell',
-  imports: [
-    RouterOutlet,
-    Header,
-    Sidebar
-  ],
+  imports: [RouterOutlet, Header, Sidebar],
   templateUrl: './shell.html',
-  styleUrl: './shell.scss'
+  styleUrl: './shell.scss',
 })
-export class Shell {
-
-}
+export class Shell {}

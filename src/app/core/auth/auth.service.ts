@@ -12,69 +12,39 @@ interface LoginResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
   private readonly http = inject(HttpClient);
 
-  private readonly loginUrl =
-    '/api/v1/auth/login';
+  private readonly loginUrl = '/api/v1/auth/login';
 
-  private readonly tokenKey =
-    'scm_access_token';
+  private readonly tokenKey = 'scm_access_token';
 
-  login(
-    username: string,
-    password: string
-  ): Observable<LoginResponse> {
-
+  login(username: string, password: string): Observable<LoginResponse> {
     const request: LoginRequest = {
       username,
-      password
+      password,
     };
 
     return this.http
-      .post<LoginResponse>(
-        this.loginUrl,
-        request
-      )
-      .pipe(
-        tap(response =>
-          this.storeToken(
-            response.token
-          )
-        )
-      );
+      .post<LoginResponse>(this.loginUrl, request)
+      .pipe(tap((response) => this.storeToken(response.token)));
   }
 
   logout(): void {
-
-    localStorage.removeItem(
-      this.tokenKey
-    );
+    localStorage.removeItem(this.tokenKey);
   }
 
   getToken(): string | null {
-
-    return localStorage.getItem(
-      this.tokenKey
-    );
+    return localStorage.getItem(this.tokenKey);
   }
 
   isAuthenticated(): boolean {
-
     return this.getToken() !== null;
   }
 
-  private storeToken(
-    token: string
-  ): void {
-
-    localStorage.setItem(
-      this.tokenKey,
-      token
-    );
+  private storeToken(token: string): void {
+    localStorage.setItem(this.tokenKey, token);
   }
-
 }

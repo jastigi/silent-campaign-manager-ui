@@ -16,13 +16,9 @@
 }
 
 .page-header p {
-  margin:
-    8px 0 0;
+  margin: 8px 0 0;
 
-  color:
-    var(
-      --mat-sys-on-surface-variant
-    );
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .table-container {
@@ -30,14 +26,9 @@
 
   border-radius: 12px;
 
-  background:
-    var(
-      --mat-sys-surface
-    );
+  background: var(--mat-sys-surface);
 
-  box-shadow:
-    0 2px 8px
-    rgb(0 0 0 / 8%);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
 }
 
 table {
@@ -55,15 +46,9 @@ table {
 
   border-radius: 12px;
 
-  color:
-    var(
-      --mat-sys-error
-    );
+  color: var(--mat-sys-error);
 
-  background:
-    var(
-      --mat-sys-error-container
-    );
+  background: var(--mat-sys-error-container);
 }
 
 .campaign-row {
@@ -71,10 +56,7 @@ table {
 }
 
 .campaign-row:hover {
-  background:
-    var(
-      --mat-sys-surface-container
-    );
+  background: var(--mat-sys-surface-container);
 }
 
 mat-chip.status-active {

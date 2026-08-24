@@ -1,81 +1,41 @@
-import {
-  Component,
-  inject,
-  signal
-} from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 
-import {
-  DatePipe,
-  DecimalPipe
-} from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 
-import {
-  ActivatedRoute,
-  Router
-} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import {
-  MatButtonModule
-} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 
-import {
-  MatCardModule
-} from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
 
-import {
-  MatChipsModule
-} from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
 
-import {
-  MatIconModule
-} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 
-import {
-  MatProgressSpinnerModule
-} from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import {
-  MatTableModule
-} from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 
-import {
-  CampaignService
-} from '../../data-access/campaign.service';
+import { CampaignService } from '../../data-access/campaign.service';
 
-import {
-  CampaignDetails
-} from '../../models/campaign.model';
+import { CampaignDetails } from '../../models/campaign.model';
 
-import {
-  CampaignStatistics
-} from '../../models/campaign-statistics.model';
+import { CampaignStatistics } from '../../models/campaign-statistics.model';
 
 import {
   CampaignTimelineEvent,
-  CampaignTimelineEventType
+  CampaignTimelineEventType,
 } from '../../models/campaign-timeline.model';
 
-import {
-  PageEvent
-} from '@angular/material/paginator';
+import { PageEvent } from '@angular/material/paginator';
 
-import {
-  MatPaginatorModule
-} from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
-import {
-  CampaignExecution,
-  CampaignExecutionStatus
-} from '../../models/campaign-execution.model';
+import { CampaignExecution, CampaignExecutionStatus } from '../../models/campaign-execution.model';
 
-import {
-  MatSnackBar,
-  MatSnackBarModule
-} from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import {
-  CampaignSimulationResult
-} from '../../models/campaign-simulation.model';
+import { CampaignSimulationResult } from '../../models/campaign-simulation.model';
 
 @Component({
   selector: 'app-campaign-detail',
@@ -89,97 +49,60 @@ import {
     MatChipsModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatTableModule
+    MatTableModule,
   ],
   templateUrl: './campaign-detail.html',
-  styleUrl: './campaign-detail.scss'
+  styleUrl: './campaign-detail.scss',
 })
 export class CampaignDetail {
+  private readonly route = inject(ActivatedRoute);
 
-  private readonly route =
-    inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
-  private readonly router =
-    inject(Router);
+  private readonly campaignService = inject(CampaignService);
 
-  private readonly campaignService =
-    inject(CampaignService);
+  private readonly snackBar = inject(MatSnackBar);
 
-  private readonly snackBar =
-  inject(MatSnackBar);
+  readonly campaign = signal<CampaignDetails | null>(null);
 
-  readonly campaign =
-    signal<CampaignDetails | null>(null);
+  readonly loading = signal(true);
 
-  readonly loading =
-    signal(true);
+  readonly loadError = signal(false);
 
-  readonly loadError =
-    signal(false);
+  readonly displayedPatrolColumns = ['id', 'patrolName', 'area', 'result'];
 
-  readonly displayedPatrolColumns = [
-    'id',
-    'patrolName',
-    'area',
-    'result'
-  ];
+  readonly statistics = signal<CampaignStatistics | null>(null);
 
-  readonly statistics =
-  signal<CampaignStatistics | null>(null);
+  readonly statisticsLoading = signal(true);
 
-  readonly statisticsLoading =
-    signal(true);
+  readonly statisticsError = signal(false);
 
-  readonly statisticsError =
-    signal(false);
+  readonly timeline = signal<CampaignTimelineEvent[]>([]);
 
-  readonly timeline =
-  signal<CampaignTimelineEvent[]>([]);
+  readonly timelineLoading = signal(true);
 
-  readonly timelineLoading =
-    signal(true);
+  readonly timelineError = signal(false);
 
-  readonly timelineError =
-    signal(false);
+  readonly executions = signal<CampaignExecution[]>([]);
 
-    readonly executions =
-  signal<CampaignExecution[]>([]);
+  readonly executionsLoading = signal(true);
 
-  readonly executionsLoading =
-    signal(true);
+  readonly executionsError = signal(false);
 
-  readonly executionsError =
-    signal(false);
+  readonly executionsTotal = signal(0);
 
-  readonly executionsTotal =
-    signal(0);
+  readonly executionsPageIndex = signal(0);
 
-  readonly executionsPageIndex =
-    signal(0);
+  readonly executionsPageSize = signal(10);
 
-  readonly executionsPageSize =
-    signal(10);
+  readonly executionColumns = ['id', 'status', 'patrols', 'startedAt', 'completedAt'];
 
-  readonly executionColumns = [
-    'id',
-    'status',
-    'patrols',
-    'startedAt',
-    'completedAt'
-  ];
+  readonly simulating = signal(false);
 
-  readonly simulating =
-    signal(false);
-
-  readonly simulationResult =
-    signal<CampaignSimulationResult | null>(null);
+  readonly simulationResult = signal<CampaignSimulationResult | null>(null);
 
   constructor() {
-
-    const id =
-      Number(
-        this.route.snapshot.paramMap.get('id')
-      );
+    const id = Number(this.route.snapshot.paramMap.get('id'));
 
     this.loadCampaign(id);
     this.loadStatistics(id);
@@ -187,51 +110,33 @@ export class CampaignDetail {
     this.loadExecutions(id);
   }
 
-  private loadCampaign(
-    id: number
-  ): void {
-
+  private loadCampaign(id: number): void {
     this.loading.set(true);
     this.loadError.set(false);
 
-    this.campaignService
-      .getCampaignDetails(id)
-      .subscribe({
-        next: campaign => {
+    this.campaignService.getCampaignDetails(id).subscribe({
+      next: (campaign) => {
+        this.campaign.set(campaign);
 
-          this.campaign.set(
-            campaign
-          );
+        this.loading.set(false);
+      },
 
-          this.loading.set(false);
-        },
-
-        error: () => {
-
-          this.loading.set(false);
-          this.loadError.set(true);
-        }
-      });
+      error: () => {
+        this.loading.set(false);
+        this.loadError.set(true);
+      },
+    });
   }
 
   back(): void {
-
-    this.router.navigate([
-      '/campaigns'
-    ]);
+    this.router.navigate(['/campaigns']);
   }
 
-  statusClass(
-    status: CampaignDetails['status']
-  ): string {
-
+  statusClass(status: CampaignDetails['status']): string {
     return `status-${status.toLowerCase()}`;
   }
 
-  resultClass(
-    result: string | null
-  ): string {
-
+  resultClass(result: string | null): string {
     if (!result) {
       return 'result-pending';
     }
@@ -239,12 +144,8 @@ export class CampaignDetail {
     return `result-${result.toLowerCase().replace('_', '-')}`;
   }
 
-  missionOutcomeClass(
-    outcome: string | null | undefined
-  ): string {
-
+  missionOutcomeClass(outcome: string | null | undefined): string {
     switch (outcome) {
-
       case 'SUCCESS':
         return 'mission-outcome-success';
 
@@ -259,66 +160,44 @@ export class CampaignDetail {
     }
   }
 
-  private loadStatistics(
-    id: number
-  ): void {
-
+  private loadStatistics(id: number): void {
     this.statisticsLoading.set(true);
     this.statisticsError.set(false);
 
-    this.campaignService
-      .getCampaignStatistics(id)
-      .subscribe({
-        next: statistics => {
+    this.campaignService.getCampaignStatistics(id).subscribe({
+      next: (statistics) => {
+        this.statistics.set(statistics);
 
-          this.statistics.set(
-            statistics
-          );
+        this.statisticsLoading.set(false);
+      },
 
-          this.statisticsLoading.set(false);
-        },
-
-        error: () => {
-
-          this.statisticsLoading.set(false);
-          this.statisticsError.set(true);
-        }
-      });
+      error: () => {
+        this.statisticsLoading.set(false);
+        this.statisticsError.set(true);
+      },
+    });
   }
 
-  private loadTimeline(
-    id: number
-  ): void {
-
+  private loadTimeline(id: number): void {
     this.timelineLoading.set(true);
     this.timelineError.set(false);
 
-    this.campaignService
-      .getCampaignTimeline(id)
-      .subscribe({
-        next: timeline => {
+    this.campaignService.getCampaignTimeline(id).subscribe({
+      next: (timeline) => {
+        this.timeline.set(timeline);
 
-          this.timeline.set(
-            timeline
-          );
+        this.timelineLoading.set(false);
+      },
 
-          this.timelineLoading.set(false);
-        },
-
-        error: () => {
-
-          this.timelineLoading.set(false);
-          this.timelineError.set(true);
-        }
-      });
+      error: () => {
+        this.timelineLoading.set(false);
+        this.timelineError.set(true);
+      },
+    });
   }
 
-  timelineClass(
-    type: CampaignTimelineEventType
-  ): string {
-
+  timelineClass(type: CampaignTimelineEventType): string {
     switch (type) {
-
       case 'CAMPAIGN_EXECUTION_STARTED':
         return 'timeline-blue';
 
@@ -330,78 +209,47 @@ export class CampaignDetail {
 
       case 'PATROL_COMPLETED':
         return 'timeline-amber';
-
     }
   }
 
-  private loadExecutions(
-  campaignId: number
-): void {
+  private loadExecutions(campaignId: number): void {
+    this.executionsLoading.set(true);
+    this.executionsError.set(false);
 
-  this.executionsLoading.set(true);
-  this.executionsError.set(false);
+    this.campaignService
+      .getCampaignExecutions(campaignId, this.executionsPageIndex(), this.executionsPageSize())
+      .subscribe({
+        next: (response) => {
+          this.executions.set(response.content);
 
-  this.campaignService
-    .getCampaignExecutions(
-      campaignId,
-      this.executionsPageIndex(),
-      this.executionsPageSize()
-    )
-    .subscribe({
-      next: response => {
+          this.executionsTotal.set(response.totalElements);
 
-        this.executions.set(
-          response.content
-        );
+          this.executionsLoading.set(false);
+        },
 
-        this.executionsTotal.set(
-          response.totalElements
-        );
-
-        this.executionsLoading.set(false);
-      },
-
-      error: () => {
-
-        this.executionsLoading.set(false);
-        this.executionsError.set(true);
-      }
-    });
-}
-
-onExecutionPageChange(
-    event: PageEvent
-  ): void {
-
-    this.executionsPageIndex.set(
-      event.pageIndex
-    );
-
-    this.executionsPageSize.set(
-      event.pageSize
-    );
-
-    const campaignId =
-      Number(
-        this.route.snapshot.paramMap.get('id')
-      );
-
-    this.loadExecutions(
-      campaignId
-    );
+        error: () => {
+          this.executionsLoading.set(false);
+          this.executionsError.set(true);
+        },
+      });
   }
 
-  executionStatusClass(
-    status: CampaignExecutionStatus
-  ): string {
+  onExecutionPageChange(event: PageEvent): void {
+    this.executionsPageIndex.set(event.pageIndex);
 
+    this.executionsPageSize.set(event.pageSize);
+
+    const campaignId = Number(this.route.snapshot.paramMap.get('id'));
+
+    this.loadExecutions(campaignId);
+  }
+
+  executionStatusClass(status: CampaignExecutionStatus): string {
     return `execution-${status.toLowerCase()}`;
   }
 
   runSimulation(): void {
-
-    const campaign =
-      this.campaign();
+    const campaign = this.campaign();
 
     if (!campaign) {
       return;
@@ -411,10 +259,7 @@ onExecutionPageChange(
       return;
     }
 
-    const confirmed =
-      window.confirm(
-        `Run simulation for "${campaign.name}"?`
-      );
+    const confirmed = window.confirm(`Run simulation for "${campaign.name}"?`);
 
     if (!confirmed) {
       return;
@@ -422,77 +267,46 @@ onExecutionPageChange(
 
     this.simulating.set(true);
 
-    this.campaignService
-      .simulateCampaign(
-        campaign.id
-      )
-      .subscribe({
-        next: result => {
+    this.campaignService.simulateCampaign(campaign.id).subscribe({
+      next: (result) => {
+        this.simulationResult.set(result);
 
-          this.simulationResult.set(
-            result
-          );
+        this.simulating.set(false);
 
-          this.simulating.set(false);
+        this.snackBar.open('Campaign simulation completed successfully.', 'Close', {
+          duration: 5000,
+        });
 
-          this.snackBar.open(
-            'Campaign simulation completed successfully.',
-            'Close',
-            {
-              duration: 5000
-            }
-          );
+        this.executionsPageIndex.set(0);
 
-          this.executionsPageIndex.set(0);
+        this.loadCampaign(campaign.id);
 
-          this.loadCampaign(
-            campaign.id
-          );
+        this.loadStatistics(campaign.id);
 
-          this.loadStatistics(
-            campaign.id
-          );
+        this.loadTimeline(campaign.id);
 
-          this.loadTimeline(
-            campaign.id
-          );
+        this.loadExecutions(campaign.id);
+      },
 
-          this.loadExecutions(
-            campaign.id
-          );
-        },
+      error: (error) => {
+        this.simulating.set(false);
 
-        error: error => {
+        const message = error?.error?.message ?? 'Campaign simulation failed.';
 
-          this.simulating.set(false);
+        this.snackBar.open(message, 'Close', {
+          duration: 7000,
+        });
 
-          const message =
-            error?.error?.message
-              ?? 'Campaign simulation failed.';
+        /*
+         * Even failed simulations may generate
+         * execution-history records.
+         */
+        this.executionsPageIndex.set(0);
 
-          this.snackBar.open(
-            message,
-            'Close',
-            {
-              duration: 7000
-            }
-          );
+        this.loadExecutions(campaign.id);
 
-          /*
-          * Even failed simulations may generate
-          * execution-history records.
-          */
-          this.executionsPageIndex.set(0);
-
-          this.loadExecutions(
-            campaign.id
-          );
-
-          this.loadTimeline(
-            campaign.id
-          );
-        }
-      });
+        this.loadTimeline(campaign.id);
+      },
+    });
   }
-
 }

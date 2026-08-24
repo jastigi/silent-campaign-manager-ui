@@ -6,14 +6,8 @@ import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [
-    RouterLink,
-    MatIconModule,
-    MatListModule
-  ],
+  imports: [RouterLink, MatIconModule, MatListModule],
   templateUrl: './sidebar.html',
-  styleUrl: './sidebar.scss'
+  styleUrl: './sidebar.scss',
 })
-export class Sidebar {
-
-}
+export class Sidebar {}
