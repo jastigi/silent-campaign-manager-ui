@@ -657,3 +657,11 @@ mat-chip.status-abandoned * {
   color: #475569;
   background: #e2e8f0;
 }
+
+.patrol-row {
+  cursor: pointer;
+}
+
+.patrol-row:hover {
+  background: var(--mat-sys-surface-container);
+}

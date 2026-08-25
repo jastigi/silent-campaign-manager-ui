@@ -1,0 +1,277 @@
+<section class="patrol-detail-page">
+  <button mat-button type="button" (click)="back()">
+    <mat-icon> arrow_back </mat-icon>
+
+    <span> Back to campaign </span>
+  </button>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else if (loadError()) {
+    <div class="error-state">Unable to load patrol details.</div>
+  } @else if (report(); as report) {
+    <div class="patrol-header">
+      <div>
+        <span class="header-eyebrow">PATROL</span>
+
+        <h1>{{ report.patrolName }}</h1>
+
+        <p>{{ report.campaignName }} · {{ report.submarineName }}</p>
+      </div>
+
+      <div class="patrol-header-actions">
+        <span class="mission-status" [class]="missionStatusClass(report.missionStatus)">
+          @if (report.missionStatus) {
+            {{ formatValue(report.missionStatus) }}
+          } @else {
+            PENDING
+          }
+        </span>
+
+        @if (report.missionStatus === null) {
+          <button
+            mat-flat-button
+            type="button"
+            class="close-patrol-button"
+            [disabled]="closing()"
+            (click)="closePatrol()"
+          >
+            @if (closing()) {
+              <span>
+                <mat-spinner diameter="18"></mat-spinner>
+
+                Closing...
+              </span>
+            } @else {
+              <span>
+                <mat-icon>check_circle</mat-icon>
+
+                Close Patrol
+              </span>
+            }
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Assignment -->
+
+    <div class="overview-grid">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Campaign</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="primary-value">{{ report.campaignName }}</div>
+
+          <div class="secondary-value">Campaign ID {{ report.campaignId }}</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Submarine</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="primary-value">{{ report.submarineName }}</div>
+
+          <div class="secondary-value">{{ formatValue(report.submarineClass) }}</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Operational assessment -->
+
+    <section class="detail-section">
+      <div class="section-header">
+        <h2>Operational Assessment</h2>
+
+        <p>Current patrol performance and tactical indicators.</p>
+      </div>
+
+      <div class="statistics-grid">
+        <mat-card class="stat-card stat-blue">
+          <mat-card-content>
+            <span class="stat-label">Risk Score</span>
+
+            <strong class="stat-value">{{ report.riskScore }}</strong>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card stat-green">
+          <mat-card-content>
+            <span class="stat-label">Contacts</span>
+
+            <strong class="stat-value">{{ report.detectedContacts }}</strong>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card stat-neutral">
+          <mat-card-content>
+            <span class="stat-label">Events</span>
+
+            <strong class="stat-value">{{ report.eventsRecorded }}</strong>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card stat-amber">
+          <mat-card-content>
+            <span class="stat-label">Confidence</span>
+
+            <strong class="stat-value">{{ report.averageConfidence }}%</strong>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </section>
+
+    <!-- Threat assessment -->
+
+    <section class="detail-section">
+      <div class="section-header">
+        <h2>Threat Assessment</h2>
+      </div>
+
+      <div class="threat-grid">
+        <div class="threat-summary threat-critical">
+          <span> Critical Contacts </span>
+
+          <strong>{{ report.criticalContacts }}</strong>
+        </div>
+
+        <div class="threat-summary threat-high">
+          <span> High Threat </span>
+
+          <strong>{{ report.highThreatContacts }}</strong>
+        </div>
+
+        <div class="threat-summary threat-neutral">
+          <span> Critical Events </span>
+
+          <strong>{{ report.criticalEvents }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contacts -->
+
+    <section class="detail-section">
+      <div class="section-header">
+        <h2>Contacts</h2>
+
+        <p>Contacts detected during this patrol.</p>
+      </div>
+
+      @if (contacts().length === 0) {
+        <mat-card>
+          <mat-card-content>
+            <p class="empty-state">No contacts recorded.</p>
+          </mat-card-content>
+        </mat-card>
+      } @else {
+        <mat-card>
+          <mat-card-content>
+            <table mat-table [dataSource]="contacts()">
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Contact</th>
+
+                <td mat-cell *matCellDef="let contact">
+                  <strong>{{ contact.contactName }}</strong>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="type">
+                <th mat-header-cell *matHeaderCellDef>Type</th>
+
+                <td mat-cell *matCellDef="let contact">
+                  {{ formatValue(contact.contactType) }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="nation">
+                <th mat-header-cell *matHeaderCellDef>Nation</th>
+
+                <td mat-cell *matCellDef="let contact">{{ contact.nation }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="alignment">
+                <th mat-header-cell *matHeaderCellDef>Alignment</th>
+
+                <td mat-cell *matCellDef="let contact">
+                  <span class="contact-badge" [class]="alignmentClass(contact.nationAlignment)">
+                    {{ contact.nationAlignment }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="threat">
+                <th mat-header-cell *matHeaderCellDef>Threat</th>
+
+                <td mat-cell *matCellDef="let contact">
+                  <span class="contact-badge" [class]="threatClass(contact.threatLevel)">
+                    {{ contact.threatLevel }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="confidence">
+                <th mat-header-cell *matHeaderCellDef>Confidence</th>
+
+                <td mat-cell *matCellDef="let contact">{{ contact.confidenceLevel }}%</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="contactColumns"></tr>
+
+              <tr mat-row *matRowDef="let row; columns: contactColumns"></tr>
+            </table>
+          </mat-card-content>
+        </mat-card>
+      }
+    </section>
+
+    <!-- Mission evaluation -->
+
+    <section class="detail-section">
+      <div class="section-header">
+        <h2>Mission Evaluation</h2>
+      </div>
+
+      @if (evaluation(); as evaluation) {
+        <mat-card>
+          <mat-card-content>
+            <div class="evaluation-grid">
+              <div>
+                <span class="stat-label">Result</span>
+
+                <span class="patrol-result" [class]="patrolResultClass(evaluation.patrolResult)">
+                  {{ formatValue(evaluation.patrolResult) }}
+                </span>
+              </div>
+
+              <div>
+                <span class="stat-label">Score</span>
+
+                <strong class="evaluation-score">{{ evaluation.score }}</strong>
+              </div>
+            </div>
+
+            <div class="evaluation-summary">
+              <span> Summary </span>
+
+              <p>{{ evaluation.summary }}</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      } @else {
+        <mat-card>
+          <mat-card-content>
+            <p class="empty-state">Mission evaluation is not available.</p>
+          </mat-card-content>
+        </mat-card>
+      }
+    </section>
+  }
+</section>

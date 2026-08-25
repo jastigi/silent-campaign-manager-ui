@@ -1,0 +1,379 @@
+.patrol-detail-page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.patrol-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.header-eyebrow {
+  display: block;
+  margin-bottom: 6px;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+
+  color: #667085;
+}
+
+.patrol-header h1 {
+  margin: 0;
+
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.patrol-header p {
+  margin: 6px 0 0;
+
+  color: #667085;
+}
+
+.overview-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+.primary-value {
+  margin-top: 16px;
+
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.secondary-value {
+  margin-top: 6px;
+
+  color: #667085;
+}
+
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.section-header h2 {
+  margin: 0;
+
+  font-size: 1.4rem;
+}
+
+.section-header p {
+  margin: 6px 0 0;
+
+  color: #667085;
+}
+
+/* Statistics */
+
+.statistics-grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+.stat-card {
+  min-height: 130px;
+
+  border-left: 5px solid transparent;
+}
+
+.stat-card mat-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  padding-top: 20px;
+}
+
+.stat-label {
+  color: #667085;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.stat-blue {
+  border-left-color: #1976d2;
+}
+
+.stat-green {
+  border-left-color: #2e7d32;
+}
+
+.stat-neutral {
+  border-left-color: #6b7280;
+}
+
+.stat-amber {
+  border-left-color: #d97706;
+}
+
+/* Mission status */
+
+.mission-status,
+.patrol-result,
+.contact-badge {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.mission-status-success,
+.patrol-result-success {
+  color: #166534;
+  background: #dcfce7;
+  border: 1px solid #86efac;
+}
+
+.mission-status-partial-success,
+.patrol-result-partial-success {
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+}
+
+.mission-status-failed,
+.patrol-result-failure {
+  color: #991b1b;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+}
+
+.mission-status-aborted {
+  color: #475569;
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
+}
+
+.mission-status-pending {
+  color: #475569;
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
+}
+
+/* Threat */
+
+.threat-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+.threat-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px 18px;
+
+  border-radius: 10px;
+
+  font-weight: 600;
+}
+
+.threat-summary strong {
+  font-size: 1.4rem;
+}
+
+.threat-critical {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.threat-high {
+  color: #9a3412;
+  background: #ffedd5;
+}
+
+.threat-neutral {
+  color: #475569;
+  background: #e2e8f0;
+}
+
+/* Contact threat levels */
+
+.threat-low {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.threat-medium {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.threat-high {
+  color: #9a3412;
+  background: #ffedd5;
+}
+
+.threat-critical {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+/* Alignment */
+
+.alignment-friendly {
+  color: #1e40af;
+  background: #dbeafe;
+}
+
+.alignment-hostile {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.alignment-neutral {
+  color: #475569;
+  background: #e2e8f0;
+}
+
+.alignment-unknown {
+  color: #475569;
+  background: #f1f5f9;
+}
+
+/* Contacts */
+
+table {
+  width: 100%;
+}
+
+/* Evaluation */
+
+.evaluation-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 28px;
+
+  padding-top: 8px;
+}
+
+.evaluation-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.evaluation-score {
+  font-size: 2rem;
+}
+
+.evaluation-summary {
+  margin-top: 24px;
+  padding-top: 20px;
+
+  border-top: 1px solid #e5e7eb;
+}
+
+.evaluation-summary > span {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #667085;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.evaluation-summary p {
+  margin: 0;
+
+  line-height: 1.6;
+}
+
+.empty-state {
+  margin: 0;
+
+  color: #667085;
+}
+
+.loading-state {
+  display: grid;
+
+  min-height: 300px;
+
+  place-items: center;
+}
+
+.error-state {
+  padding: 24px;
+
+  border-radius: 12px;
+
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+@media (max-width: 1000px) {
+  .statistics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .patrol-header {
+    flex-direction: column;
+  }
+
+  .overview-grid,
+  .statistics-grid,
+  .threat-grid,
+  .evaluation-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.patrol-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.close-patrol-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.close-patrol-button mat-spinner {
+  display: inline-block;
+}
