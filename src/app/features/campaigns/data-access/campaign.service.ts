@@ -4,7 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
-import { Campaign, CampaignDetails } from '../models/campaign.model';
+import { Campaign, CampaignDetails, CampaignRequest } from '../models/campaign.model';
 
 import { PageResponse } from '../models/page-response.model';
 
@@ -23,6 +23,22 @@ export class CampaignService {
   private readonly http = inject(HttpClient);
 
   private readonly baseUrl = '/api/v1/campaigns';
+
+  createCampaign(request: CampaignRequest): Observable<Campaign> {
+    return this.http.post<Campaign>(this.baseUrl, request);
+  }
+
+  getCampaignById(id: number): Observable<Campaign> {
+    return this.http.get<Campaign>(`${this.baseUrl}/${id}`);
+  }
+
+  updateCampaign(id: number, request: CampaignRequest): Observable<Campaign> {
+    return this.http.put<Campaign>(`${this.baseUrl}/${id}`, request);
+  }
+
+  deleteCampaign(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
 
   getCampaigns(
     page = 0,

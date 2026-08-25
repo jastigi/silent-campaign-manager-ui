@@ -99,6 +99,8 @@ export class CampaignDetail {
 
   readonly simulating = signal(false);
 
+  readonly deleting = signal(false);
+
   readonly simulationResult = signal<CampaignSimulationResult | null>(null);
 
   constructor() {
@@ -130,6 +132,56 @@ export class CampaignDetail {
 
   back(): void {
     this.router.navigate(['/campaigns']);
+  }
+
+  editCampaign(): void {
+    const campaign = this.campaign();
+
+    if (!campaign || campaign.status !== 'ACTIVE') {
+      return;
+    }
+
+    this.router.navigate(['/campaigns', campaign.id, 'edit']);
+  }
+
+  deleteCampaign(): void {
+    const campaign = this.campaign();
+
+    if (!campaign || campaign.status !== 'ACTIVE' || this.deleting()) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Delete campaign "${campaign.name}"?\n\nThis action cannot be undone.`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.deleting.set(true);
+
+    this.campaignService.deleteCampaign(campaign.id).subscribe({
+      next: () => {
+        this.deleting.set(false);
+
+        this.snackBar.open('Campaign deleted successfully.', 'Close', {
+          duration: 4000,
+        });
+
+        this.router.navigate(['/campaigns']);
+      },
+
+      error: (error) => {
+        this.deleting.set(false);
+
+        const message = error?.error?.message ?? 'Unable to delete campaign.';
+
+        this.snackBar.open(message, 'Close', {
+          duration: 6000,
+        });
+      },
+    });
   }
 
   statusClass(status: CampaignDetails['status']): string {

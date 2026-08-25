@@ -5,6 +5,12 @@
 
       <p>Manage submarine campaigns and operational activity.</p>
     </div>
+
+    <button mat-flat-button type="button" (click)="createCampaign()">
+      <mat-icon>add</mat-icon>
+
+      <span>New Campaign</span>
+    </button>
   </div>
 
   @if (loading()) {

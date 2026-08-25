@@ -28,18 +28,44 @@
           {{ campaign.status }}
         </mat-chip>
 
+        @if (campaign.status === 'ACTIVE') {
+          <button
+            mat-button
+            type="button"
+            [disabled]="simulating() || deleting()"
+            (click)="editCampaign()"
+          >
+            <mat-icon>edit</mat-icon>
+
+            <span>Edit</span>
+          </button>
+
+          <button
+            mat-button
+            type="button"
+            [disabled]="simulating() || deleting()"
+            (click)="deleteCampaign()"
+          >
+            <mat-icon>delete</mat-icon>
+
+            <span>{{ deleting() ? 'Deleting...' : 'Delete' }}</span>
+          </button>
+        }
+
         <button
           mat-flat-button
           type="button"
-          [disabled]="campaign.status !== 'ACTIVE' || simulating()"
+          [disabled]="campaign.status !== 'ACTIVE' || simulating() || deleting()"
           (click)="runSimulation()"
         >
           @if (simulating()) {
-            Running simulation...
+            <span>Running simulation...</span>
           } @else {
-            <mat-icon> play_arrow </mat-icon>
+            <span>
+              <mat-icon>play_arrow</mat-icon>
 
-            Run Simulation
+              Run Simulation
+            </span>
           }
         </button>
       </div>

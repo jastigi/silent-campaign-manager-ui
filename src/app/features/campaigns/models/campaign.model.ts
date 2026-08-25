@@ -18,3 +18,10 @@ export interface PatrolSummary {
 export interface CampaignDetails extends Campaign {
   patrols: PatrolSummary[];
 }
+
+export interface CampaignRequest {
+  name: string;
+  description: string | null;
+  startDate: string;
+  status: CampaignStatus;
+}

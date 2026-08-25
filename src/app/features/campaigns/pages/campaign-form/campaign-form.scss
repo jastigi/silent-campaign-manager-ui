@@ -1,0 +1,128 @@
+.campaign-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 6px 0 0;
+    opacity: 0.7;
+  }
+}
+
+.form-card {
+  max-width: 900px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding-top: 8px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.description-field {
+  width: 100%;
+}
+
+.loading-state {
+  display: grid;
+
+  min-height: 300px;
+
+  place-items: center;
+}
+
+.error-state {
+  padding: 24px;
+
+  border-radius: 12px;
+
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.status-information {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 16px 18px;
+
+  border-radius: 8px;
+
+  background: rgba(33, 150, 243, 0.08);
+
+  mat-icon {
+    flex-shrink: 0;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  strong {
+    font-weight: 600;
+  }
+
+  span {
+    font-size: 0.9rem;
+    opacity: 0.75;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+
+  padding-top: 8px;
+
+  button {
+    min-width: 120px;
+  }
+
+  button[type='submit'] {
+    min-width: 180px;
+  }
+
+  mat-spinner {
+    display: inline-block;
+    margin-right: 8px;
+  }
+}
+
+@media (max-width: 700px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+
+    button {
+      width: 100%;
+    }
+  }
+}

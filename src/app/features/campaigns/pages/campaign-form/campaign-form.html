@@ -1,0 +1,109 @@
+<section class="campaign-form-page">
+  <button mat-button type="button" (click)="cancel()">
+    <mat-icon>arrow_back</mat-icon>
+
+    <span>{{ editMode() ? 'Back to campaign' : 'Back to campaigns' }}</span>
+  </button>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else if (loadError()) {
+    <div class="error-state">Unable to load campaign.</div>
+  } @else {
+    <div class="page-header">
+      <div>
+        <h1>{{ editMode() ? 'Edit Campaign' : 'New Campaign' }}</h1>
+
+        <p>
+          {{ editMode() ? 'Update campaign information.' : 'Create a new operational campaign.' }}
+        </p>
+      </div>
+    </div>
+
+    <mat-card class="form-card">
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="save()">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Campaign name</mat-label>
+
+              <input matInput formControlName="name" maxlength="100" />
+
+              @if (form.controls.name.touched && form.controls.name.hasError('required')) {
+                <mat-error> Campaign name is required. </mat-error>
+              }
+
+              @if (form.controls.name.touched && form.controls.name.hasError('maxlength')) {
+                <mat-error> Maximum 100 characters. </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Start date</mat-label>
+
+              <input matInput type="date" formControlName="startDate" />
+
+              @if (
+                form.controls.startDate.touched && form.controls.startDate.hasError('required')
+              ) {
+                <mat-error> Start date is required. </mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="description-field">
+            <mat-label>Description</mat-label>
+
+            <textarea matInput formControlName="description" rows="5" maxlength="500"></textarea>
+
+            @if (
+              form.controls.description.touched && form.controls.description.hasError('maxlength')
+            ) {
+              <mat-error> Maximum 500 characters. </mat-error>
+            }
+          </mat-form-field>
+
+          <div class="status-information">
+            <mat-icon>info</mat-icon>
+
+            <div>
+              <strong>Status: ACTIVE</strong>
+
+              <span>
+                {{
+                  editMode()
+                    ? 'Campaign lifecycle status is managed separately.'
+                    : 'New campaigns always start in active status.'
+                }}
+              </span>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button mat-button type="button" [disabled]="saving()" (click)="cancel()">
+              Cancel
+            </button>
+
+            <button mat-flat-button type="submit" [disabled]="saving()">
+              @if (saving()) {
+                <span>
+                  <mat-spinner diameter="20"></mat-spinner>
+
+                  {{ editMode() ? 'Saving...' : 'Creating...' }}
+                </span>
+              } @else {
+                <span>
+                  <mat-icon>{{ editMode() ? 'save' : 'add' }}</mat-icon>
+
+                  {{ editMode() ? 'Save Changes' : 'Create Campaign' }}
+                </span>
+              }
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

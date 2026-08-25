@@ -2,7 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 
 import { DatePipe } from '@angular/common';
 
+import { MatButtonModule } from '@angular/material/button';
+
 import { MatChipsModule } from '@angular/material/chips';
+
+import { MatIconModule } from '@angular/material/icon';
 
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
@@ -18,7 +22,15 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-campaign-list',
-  imports: [DatePipe, MatChipsModule, MatPaginatorModule, MatProgressSpinnerModule, MatTableModule],
+  imports: [
+    DatePipe,
+    MatButtonModule,
+    MatChipsModule,
+    MatIconModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
+    MatTableModule,
+  ],
   templateUrl: './campaign-list.html',
   styleUrl: './campaign-list.scss',
 })
@@ -71,6 +83,10 @@ export class CampaignList {
     this.pageSize.set(event.pageSize);
 
     this.loadCampaigns();
+  }
+
+  createCampaign(): void {
+    this.router.navigate(['/campaigns/new']);
   }
 
   openCampaign(campaign: Campaign): void {

@@ -10,6 +10,8 @@ import { Shell } from './layout/shell/shell';
 
 import { CampaignDetail } from './features/campaigns/pages/campaign-detail/campaign-detail';
 
+import { CampaignForm } from './features/campaigns/pages/campaign-form/campaign-form';
+
 import { SubmarineList } from './features/submarines/pages/submarine-list/submarine-list';
 
 import { SubmarineDetail } from './features/submarines/pages/submarine-detail/submarine-detail';
@@ -30,6 +32,14 @@ export const routes: Routes = [
         path: '',
         redirectTo: 'campaigns',
         pathMatch: 'full',
+      },
+      {
+        path: 'campaigns/new',
+        component: CampaignForm,
+      },
+      {
+        path: 'campaigns/:id/edit',
+        component: CampaignForm,
       },
       {
         path: 'campaigns/:id',
