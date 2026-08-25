@@ -1,0 +1,137 @@
+<section class="submarine-form-page">
+  <button mat-button type="button" (click)="cancel()">
+    <mat-icon> arrow_back </mat-icon>
+
+    @if (isEditMode) {
+      Back to submarine
+    } @else {
+      Back to submarines
+    }
+  </button>
+
+  <div class="page-header">
+    <h1>
+      @if (isEditMode) {
+        Edit Submarine
+      } @else {
+        New Submarine
+      }
+    </h1>
+
+    <p>
+      @if (isEditMode) {
+        Update vessel information and operational status.
+      } @else {
+        Add a new submarine to the fleet inventory.
+      }
+    </p>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else if (loadError()) {
+    <div class="error-state">Unable to load submarine.</div>
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <form class="submarine-form" [formGroup]="form" (ngSubmit)="save()">
+          <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+
+            <input matInput formControlName="name" />
+
+            @if (form.controls.name.touched && form.controls.name.invalid) {
+              <mat-error> Name is required. </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nation</mat-label>
+
+            <input matInput formControlName="nation" />
+
+            @if (form.controls.nation.touched && form.controls.nation.invalid) {
+              <mat-error> Nation is required. </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Type</mat-label>
+
+            <mat-select formControlName="type">
+              @for (type of submarineTypes; track type) {
+                <mat-option [value]="type">{{ type }}</mat-option>
+              }
+            </mat-select>
+
+            @if (form.controls.type.touched && form.controls.type.invalid) {
+              <mat-error> Type is required. </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Class</mat-label>
+
+            <mat-select formControlName="submarineClass">
+              @for (submarineClass of submarineClasses; track submarineClass) {
+                <mat-option [value]="submarineClass">
+                  {{ formatOption(submarineClass) }}
+                </mat-option>
+              }
+            </mat-select>
+
+            @if (form.controls.submarineClass.touched && form.controls.submarineClass.invalid) {
+              <mat-error> Class is required. </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Role</mat-label>
+
+            <mat-select formControlName="submarineRole">
+              @for (role of submarineRoles; track role) {
+                <mat-option [value]="role">{{ role }}</mat-option>
+              }
+            </mat-select>
+
+            @if (form.controls.submarineRole.touched && form.controls.submarineRole.invalid) {
+              <mat-error> Role is required. </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Status</mat-label>
+
+            <mat-select formControlName="status">
+              @for (status of submarineStatuses; track status) {
+                <mat-option [value]="status">{{ status }}</mat-option>
+              }
+            </mat-select>
+
+            @if (form.controls.status.touched && form.controls.status.invalid) {
+              <mat-error> Status is required. </mat-error>
+            }
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button mat-button type="button" [disabled]="saving()" (click)="cancel()">
+              Cancel
+            </button>
+
+            <button mat-flat-button type="submit" [disabled]="saving()">
+              @if (saving()) {
+                Saving...
+              } @else if (isEditMode) {
+                Save Changes
+              } @else {
+                Create Submarine
+              }
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

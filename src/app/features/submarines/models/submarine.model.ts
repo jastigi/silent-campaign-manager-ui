@@ -26,3 +26,12 @@ export interface Submarine {
   status: SubmarineStatus;
   submarineRole: SubmarineRole;
 }
+
+export interface SubmarineRequest {
+  name: string;
+  type: SubmarineType;
+  submarineClass: SubmarineClass;
+  nation: string;
+  status: SubmarineStatus;
+  submarineRole: SubmarineRole;
+}

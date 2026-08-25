@@ -14,6 +14,8 @@ import { SubmarineList } from './features/submarines/pages/submarine-list/submar
 
 import { SubmarineDetail } from './features/submarines/pages/submarine-detail/submarine-detail';
 
+import { SubmarineForm } from './features/submarines/pages/submarine-form/submarine-form';
+
 export const routes: Routes = [
   {
     path: 'login',
@@ -40,6 +42,14 @@ export const routes: Routes = [
       {
         path: 'submarines',
         component: SubmarineList,
+      },
+      {
+        path: 'submarines/new',
+        component: SubmarineForm,
+      },
+      {
+        path: 'submarines/:id/edit',
+        component: SubmarineForm,
       },
       {
         path: 'submarines/:id',

@@ -154,3 +154,20 @@
     flex-direction: column;
   }
 }
+
+.submarine-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.delete-button {
+  color: #b42318;
+}
+
+@media (max-width: 700px) {
+  .submarine-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

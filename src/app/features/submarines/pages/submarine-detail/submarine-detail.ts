@@ -10,13 +10,21 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
 import { SubmarineService } from '../../data-access/submarine.service';
 
 import { Submarine, SubmarineStatus } from '../../models/submarine.model';
 
 @Component({
   selector: 'app-submarine-detail',
-  imports: [MatButtonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
+  ],
   templateUrl: './submarine-detail.html',
   styleUrl: './submarine-detail.scss',
 })
@@ -27,11 +35,15 @@ export class SubmarineDetail {
 
   private readonly submarineService = inject(SubmarineService);
 
+  private readonly snackBar = inject(MatSnackBar);
+
   readonly submarine = signal<Submarine | null>(null);
 
   readonly loading = signal(true);
 
   readonly loadError = signal(false);
+
+  readonly deleting = signal(false);
 
   constructor() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -66,6 +78,54 @@ export class SubmarineDetail {
 
   back(): void {
     this.router.navigate(['/submarines']);
+  }
+
+  edit(): void {
+    const submarine = this.submarine();
+
+    if (!submarine) {
+      return;
+    }
+
+    this.router.navigate(['/submarines', submarine.id, 'edit']);
+  }
+
+  delete(): void {
+    const submarine = this.submarine();
+
+    if (!submarine) {
+      return;
+    }
+
+    const confirmed = window.confirm(`Delete submarine "${submarine.name}"?`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.deleting.set(true);
+
+    this.submarineService.deleteSubmarine(submarine.id).subscribe({
+      next: () => {
+        this.deleting.set(false);
+
+        this.snackBar.open('Submarine deleted successfully.', 'Close', {
+          duration: 4000,
+        });
+
+        this.router.navigate(['/submarines']);
+      },
+
+      error: (error) => {
+        this.deleting.set(false);
+
+        const message = error?.error?.message ?? 'Unable to delete submarine.';
+
+        this.snackBar.open(message, 'Close', {
+          duration: 6000,
+        });
+      },
+    });
   }
 
   statusClass(status: SubmarineStatus): string {

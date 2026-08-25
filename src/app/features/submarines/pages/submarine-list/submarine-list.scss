@@ -93,3 +93,10 @@ table {
   background: #e2e8f0;
   border: 1px solid #cbd5e1;
 }
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
