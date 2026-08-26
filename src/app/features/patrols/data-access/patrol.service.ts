@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
-import { MissionEvaluation, Patrol, PatrolReport } from '../models/patrol.model';
+import { MissionEvaluation, Patrol, PatrolReport, PatrolRequest } from '../models/patrol.model';
 
 import { Contact } from '../models/contact.model';
 
@@ -32,5 +32,9 @@ export class PatrolService {
 
   closePatrol(campaignId: number, patrolId: number): Observable<Patrol> {
     return this.http.patch<Patrol>(`/api/v1/campaigns/${campaignId}/patrols/${patrolId}/close`, {});
+  }
+
+  createPatrol(campaignId: number, request: PatrolRequest): Observable<Patrol> {
+    return this.http.post<Patrol>(`/api/v1/campaigns/${campaignId}/patrols`, request);
   }
 }

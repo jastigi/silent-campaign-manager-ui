@@ -144,6 +144,16 @@ export class CampaignDetail {
     this.router.navigate(['/campaigns', campaign.id, 'patrols', patrolId]);
   }
 
+  createPatrol(): void {
+    const campaign = this.campaign();
+
+    if (!campaign || campaign.status !== 'ACTIVE') {
+      return;
+    }
+
+    this.router.navigate(['/campaigns', campaign.id, 'patrols', 'new']);
+  }
+
   editCampaign(): void {
     const campaign = this.campaign();
 

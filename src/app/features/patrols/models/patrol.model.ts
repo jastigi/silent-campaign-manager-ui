@@ -85,3 +85,15 @@ export interface MissionEvaluation {
 
   summary: string;
 }
+
+export interface PatrolRequest {
+  patrolName: string;
+
+  patrolDate: string;
+
+  area: string | null;
+
+  submarineId: number;
+
+  missionType: MissionType;
+}

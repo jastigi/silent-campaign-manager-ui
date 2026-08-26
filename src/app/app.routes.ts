@@ -20,6 +20,8 @@ import { SubmarineForm } from './features/submarines/pages/submarine-form/submar
 
 import { PatrolDetail } from './features/patrols/pages/patrol-detail/patrol-detail';
 
+import { PatrolForm } from './features/patrols/pages/patrol-form/patrol-form';
+
 export const routes: Routes = [
   {
     path: 'login',
@@ -46,6 +48,10 @@ export const routes: Routes = [
       {
         path: 'campaigns/:id',
         component: CampaignDetail,
+      },
+      {
+        path: 'campaigns/:campaignId/patrols/new',
+        component: PatrolForm,
       },
       {
         path: 'campaigns/:campaignId/patrols/:patrolId',
