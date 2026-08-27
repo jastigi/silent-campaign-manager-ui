@@ -10,11 +10,19 @@ import { MatCardModule } from '@angular/material/card';
 
 import { MatIconModule } from '@angular/material/icon';
 
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { MatTableModule } from '@angular/material/table';
+
+import {
+  SimulationHistoryRecord,
+  SimulationOutcome,
+  PatrolSimulationState,
+} from '../../models/simulation-history.model';
 
 import { PatrolService } from '../../data-access/patrol.service';
 
@@ -34,6 +42,7 @@ import { Contact, NationAlignment, ThreatLevel } from '../../models/contact.mode
     MatButtonModule,
     MatCardModule,
     MatIconModule,
+    MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatTableModule,
@@ -66,6 +75,18 @@ export class PatrolDetail {
 
   readonly contactColumns = ['name', 'type', 'nation', 'alignment', 'threat', 'confidence'];
 
+  readonly simulationHistory = signal<SimulationHistoryRecord[]>([]);
+
+  readonly simulationHistoryLoading = signal(true);
+
+  readonly simulationHistoryError = signal(false);
+
+  readonly simulationHistoryTotal = signal(0);
+
+  readonly simulationHistoryPageIndex = signal(0);
+
+  readonly simulationHistoryPageSize = signal(5);
+
   private campaignId = 0;
 
   constructor() {
@@ -88,6 +109,8 @@ export class PatrolDetail {
     this.campaignId = campaignId;
 
     this.loadPatrol(campaignId, patrolId);
+
+    this.loadSimulationHistory(patrolId);
   }
 
   private loadPatrol(campaignId: number, patrolId: number): void {
@@ -224,6 +247,8 @@ export class PatrolDetail {
         );
 
         this.loadPatrol(this.campaignId, report.patrolId);
+
+        this.loadSimulationHistory(report.patrolId);
       },
 
       error: (error) => {
@@ -236,6 +261,56 @@ export class PatrolDetail {
         });
       },
     });
+  }
+
+  private loadSimulationHistory(patrolId: number): void {
+    this.simulationHistoryLoading.set(true);
+
+    this.simulationHistoryError.set(false);
+
+    this.patrolService
+      .getSimulationHistory(
+        patrolId,
+        this.simulationHistoryPageIndex(),
+        this.simulationHistoryPageSize(),
+      )
+      .subscribe({
+        next: (response) => {
+          this.simulationHistory.set(response.content);
+
+          this.simulationHistoryTotal.set(response.totalElements);
+
+          this.simulationHistoryLoading.set(false);
+        },
+
+        error: () => {
+          this.simulationHistoryLoading.set(false);
+
+          this.simulationHistoryError.set(true);
+        },
+      });
+  }
+
+  onSimulationHistoryPageChange(event: PageEvent): void {
+    const report = this.report();
+
+    if (!report) {
+      return;
+    }
+
+    this.simulationHistoryPageIndex.set(event.pageIndex);
+
+    this.simulationHistoryPageSize.set(event.pageSize);
+
+    this.loadSimulationHistory(report.patrolId);
+  }
+
+  simulationOutcomeClass(outcome: SimulationOutcome): string {
+    return `simulation-outcome-${outcome.toLowerCase().replaceAll('_', '-')}`;
+  }
+
+  simulationStateClass(state: PatrolSimulationState): string {
+    return `simulation-state-${state.toLowerCase().replaceAll('_', '-')}`;
   }
 
   back(): void {

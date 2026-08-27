@@ -8,6 +8,10 @@ import { MissionEvaluation, Patrol, PatrolReport, PatrolRequest } from '../model
 
 import { Contact } from '../models/contact.model';
 
+import { PageResponse } from '../../campaigns/models/page-response.model';
+
+import { SimulationHistoryRecord } from '../models/simulation-history.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -40,6 +44,23 @@ export class PatrolService {
 
   getPatrol(patrolId: number): Observable<Patrol> {
     return this.http.get<Patrol>(`/api/v1/patrols/${patrolId}`);
+  }
+
+  getSimulationHistory(
+    patrolId: number,
+    page: number,
+    size: number,
+  ): Observable<PageResponse<SimulationHistoryRecord>> {
+    return this.http.get<PageResponse<SimulationHistoryRecord>>(
+      `/api/v1/patrols/${patrolId}/simulations`,
+      {
+        params: {
+          page,
+          size,
+          sort: 'recordedAt,desc',
+        },
+      },
+    );
   }
 
   updatePatrol(campaignId: number, patrolId: number, request: PatrolRequest): Observable<Patrol> {

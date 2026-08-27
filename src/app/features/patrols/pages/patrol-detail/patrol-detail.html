@@ -261,7 +261,15 @@
         <h2>Mission Evaluation</h2>
       </div>
 
-      @if (evaluation(); as evaluation) {
+      @if (report.missionStatus === null) {
+        <mat-card>
+          <mat-card-content>
+            <p class="empty-state">
+              Mission evaluation will be available when the patrol is closed.
+            </p>
+          </mat-card-content>
+        </mat-card>
+      } @else if (evaluation(); as evaluation) {
         <mat-card>
           <mat-card-content>
             <div class="evaluation-grid">
@@ -294,6 +302,221 @@
           </mat-card-content>
         </mat-card>
       }
+    </section>
+
+    <!-- Simulation history -->
+
+    <section class="detail-section">
+      <div class="section-header">
+        <h2>Simulation History</h2>
+
+        <p>
+          Historical simulation records generated
+          for this patrol.
+        </p>
+      </div>
+
+      @if (simulationHistoryLoading()) {
+
+        <mat-card>
+          <mat-card-content>
+            <div class="simulation-history-loading">
+              <mat-spinner diameter="32"></mat-spinner>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+      } @else if (simulationHistoryError()) {
+
+        <mat-card>
+          <mat-card-content>
+            <p class="simulation-history-error">
+              Unable to load simulation history.
+            </p>
+          </mat-card-content>
+        </mat-card>
+
+      } @else if (simulationHistory().length === 0) {
+
+        <mat-card>
+          <mat-card-content>
+            <p class="empty-state">
+              No simulation history recorded for this patrol.
+            </p>
+          </mat-card-content>
+        </mat-card>
+
+      } @else {
+
+        <div class="simulation-history-list">
+
+          @for (
+            simulation of simulationHistory();
+            track simulation.id
+          ) {
+
+            <mat-card class="simulation-record-card">
+
+              <mat-card-content>
+
+                <div class="simulation-record-header">
+
+                  <div>
+
+                    <span class="simulation-record-id">
+                      Simulation #{{ simulation.id }}
+                    </span>
+
+                    <strong>
+                      {{ simulation.completionDate | date: 'dd MMM yyyy' }}
+                    </strong>
+
+                  </div>
+
+                  <div class="simulation-record-statuses">
+
+                    <div class="simulation-status-field">
+                      <span class="simulation-status-label">
+                        Mission Outcome
+                      </span>
+
+                      <span
+                        class="simulation-outcome"
+                        [class]="simulationOutcomeClass(
+                          simulation.missionOutcome
+                        )"
+                      >
+                        {{
+                          formatValue(
+                            simulation.missionOutcome
+                          )
+                        }}
+                      </span>
+                    </div>
+
+                    <div class="simulation-status-field">
+                      <span class="simulation-status-label">
+                        Final State
+                      </span>
+
+                      <span
+                        class="simulation-state"
+                        [class]="simulationStateClass(
+                          simulation.finalState
+                        )"
+                      >
+                        {{
+                          formatValue(
+                            simulation.finalState
+                          )
+                        }}
+                      </span>
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                <div class="simulation-metrics">
+
+                  <div>
+                    <span>Score</span>
+
+                    <strong>
+                      {{ simulation.missionScore }}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Contacts Detected</span>
+
+                    <strong>
+                      {{ simulation.contactsDetected }}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Contacts Lost</span>
+
+                    <strong>
+                      {{ simulation.contactsLost }}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Intelligence</span>
+
+                    <strong>
+                      {{ simulation.intelligenceGathered }}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Incidents</span>
+
+                    <strong>
+                      {{ simulation.incidents }}
+                    </strong>
+                  </div>
+
+                </div>
+
+
+                <div class="simulation-text-block">
+
+                  <span>
+                    Report Summary
+                  </span>
+
+                  <p>
+                    {{ simulation.reportSummary }}
+                  </p>
+
+                </div>
+
+
+                <div class="simulation-text-block">
+
+                  <span>
+                    Mission Debrief
+                  </span>
+
+                  <p>
+                    {{ simulation.missionDebrief }}
+                  </p>
+
+                </div>
+
+
+                <div class="simulation-recorded-at">
+                  Recorded:
+                  {{
+                    simulation.recordedAt
+                      | date: 'dd MMM yyyy HH:mm'
+                  }}
+                </div>
+
+              </mat-card-content>
+
+            </mat-card>
+
+          }
+
+        </div>
+
+
+        <mat-paginator
+          [length]="simulationHistoryTotal()"
+          [pageIndex]="simulationHistoryPageIndex()"
+          [pageSize]="simulationHistoryPageSize()"
+          [pageSizeOptions]="[5, 10, 25]"
+          (page)="onSimulationHistoryPageChange($event)"
+        >
+        </mat-paginator>
+
+      }
+
     </section>
   }
 </section>
