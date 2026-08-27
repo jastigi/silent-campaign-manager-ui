@@ -94,6 +94,7 @@
           <table
             mat-table
             [dataSource]="simulations()"
+            multiTemplateDataRows
           >
 
             <!-- Simulation ID -->
@@ -308,6 +309,57 @@
             </ng-container>
 
 
+            <!-- Actions -->
+
+            <ng-container
+              matColumnDef="actions"
+            >
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+              >
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let simulation"
+                class="actions-cell"
+              >
+
+                <button
+                  mat-button
+                  type="button"
+                  (click)="
+                    toggleDetails(
+                      simulation.id,
+                      $event
+                    )
+                  "
+                >
+                  <mat-icon>
+                    {{
+                      expandedSimulationId() ===
+                      simulation.id
+                        ? 'expand_less'
+                        : 'expand_more'
+                    }}
+                  </mat-icon>
+
+                  {{
+                    expandedSimulationId() ===
+                    simulation.id
+                      ? 'Hide'
+                      : 'Details'
+                  }}
+
+                </button>
+
+              </td>
+
+            </ng-container>
+
+
             <tr
               mat-header-row
               *matHeaderRowDef="
@@ -327,6 +379,128 @@
                 row.patrolId
               "
               (click)="openPatrol(row)"
+            ></tr>
+
+            <ng-container
+              matColumnDef="expandedDetail"
+            >
+
+              <td
+                mat-cell
+                *matCellDef="let simulation"
+                [attr.colspan]="displayedColumns.length"
+              >
+
+                @if (
+                  expandedSimulationId() ===
+                  simulation.id
+                ) {
+
+                  <div class="simulation-details">
+
+                    <div class="detail-metrics">
+
+                      <div>
+                        <span>
+                          Contacts Detected
+                        </span>
+
+                        <strong>
+                          {{
+                            simulation.contactsDetected
+                          }}
+                        </strong>
+                      </div>
+
+
+                      <div>
+                        <span>
+                          Contacts Lost
+                        </span>
+
+                        <strong>
+                          {{
+                            simulation.contactsLost
+                          }}
+                        </strong>
+                      </div>
+
+
+                      <div>
+                        <span>
+                          Intelligence
+                        </span>
+
+                        <strong>
+                          {{
+                            simulation.intelligenceGathered
+                          }}
+                        </strong>
+                      </div>
+
+
+                      <div>
+                        <span>
+                          Incidents
+                        </span>
+
+                        <strong>
+                          {{
+                            simulation.incidents
+                          }}
+                        </strong>
+                      </div>
+
+                    </div>
+
+
+                    <div class="detail-text">
+
+                      <span>
+                        Report Summary
+                      </span>
+
+                      <p>
+                        {{
+                          simulation.reportSummary
+                        }}
+                      </p>
+
+                    </div>
+
+
+                    <div class="detail-text">
+
+                      <span>
+                        Mission Debrief
+                      </span>
+
+                      <p>
+                        {{
+                          simulation.missionDebrief
+                        }}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                }
+
+              </td>
+
+            </ng-container>
+
+            <tr
+              mat-row
+              *matRowDef="
+                let row;
+                columns: ['expandedDetail']
+              "
+              class="detail-row"
+              [class.detail-row-hidden]="
+                expandedSimulationId() !== row.id
+              "
             ></tr>
 
           </table>

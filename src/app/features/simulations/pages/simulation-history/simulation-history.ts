@@ -17,6 +17,10 @@ import {
 } from '@angular/material/card';
 
 import {
+  MatButtonModule,
+} from '@angular/material/button';
+
+import {
   MatIconModule,
 } from '@angular/material/icon';
 
@@ -56,6 +60,7 @@ import {
   selector: 'app-simulation-history',
   imports: [
     DatePipe,
+    MatButtonModule,
     MatCardModule,
     MatIconModule,
     MatPaginatorModule,
@@ -100,6 +105,9 @@ export class SimulationHistory {
   readonly pageSize =
     signal(10);
 
+  readonly expandedSimulationId =
+    signal<number | null>(null);
+
   readonly displayedColumns = [
     'id',
     'patrol',
@@ -108,6 +116,7 @@ export class SimulationHistory {
     'finalState',
     'completionDate',
     'recordedAt',
+    'actions',
   ];
 
   constructor() {
@@ -155,6 +164,20 @@ export class SimulationHistory {
     );
 
     this.loadHistory();
+  }
+
+  toggleDetails(
+    simulationId: number,
+    event: MouseEvent,
+  ): void {
+    event.stopPropagation();
+
+    this.expandedSimulationId.update(
+      (currentId) =>
+        currentId === simulationId
+          ? null
+          : simulationId,
+    );
   }
 
   openPatrol(
