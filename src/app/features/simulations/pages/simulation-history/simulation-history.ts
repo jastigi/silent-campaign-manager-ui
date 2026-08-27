@@ -9,6 +9,10 @@ import {
 } from '@angular/common';
 
 import {
+  FormsModule,
+} from '@angular/forms';
+
+import {
   Router,
 } from '@angular/router';
 
@@ -19,6 +23,14 @@ import {
 import {
   MatButtonModule,
 } from '@angular/material/button';
+
+import {
+  MatFormFieldModule,
+} from '@angular/material/form-field';
+
+import {
+  MatInputModule,
+} from '@angular/material/input';
 
 import {
   MatIconModule,
@@ -60,8 +72,11 @@ import {
   selector: 'app-simulation-history',
   imports: [
     DatePipe,
+    FormsModule,
     MatButtonModule,
     MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
@@ -105,6 +120,12 @@ export class SimulationHistory {
   readonly pageSize =
     signal(10);
 
+  readonly patrolFilter =
+    signal('');
+
+  readonly activePatrolId =
+    signal<number | null>(null);
+
   readonly expandedSimulationId =
     signal<number | null>(null);
 
@@ -127,29 +148,104 @@ export class SimulationHistory {
     this.loading.set(true);
     this.loadError.set(false);
 
-    this.simulationHistoryService
-      .getHistory(
-        this.pageIndex(),
-        this.pageSize(),
-      )
-      .subscribe({
-        next: (response) => {
-          this.simulations.set(
-            response.content,
-          );
+    const patrolId =
+      this.activePatrolId();
 
-          this.totalElements.set(
-            response.totalElements,
-          );
+    const request$ =
+      patrolId !== null
+        ? this.simulationHistoryService
+            .getHistoryByPatrol(
+              patrolId,
+              this.pageIndex(),
+              this.pageSize(),
+            )
+        : this.simulationHistoryService
+            .getHistory(
+              this.pageIndex(),
+              this.pageSize(),
+            );
 
-          this.loading.set(false);
+    request$.subscribe({
+      next: (response) => {
+        this.simulations.set(
+          response.content,
+        );
+
+        this.totalElements.set(
+          response.totalElements,
+        );
+
+        this.loading.set(false);
+      },
+
+      error: () => {
+        this.loading.set(false);
+        this.loadError.set(true);
+      },
+    });
+  }
+
+  applyPatrolFilter(): void {
+    const rawValue =
+      this.patrolFilter().trim();
+
+    if (!rawValue) {
+      this.clearPatrolFilter();
+
+      return;
+    }
+
+    const patrolId =
+      Number(rawValue);
+
+    if (
+      !Number.isInteger(patrolId) ||
+      patrolId <= 0
+    ) {
+      this.snackBar.open(
+        'Enter a valid Patrol ID.',
+        'Close',
+        {
+          duration: 4000,
         },
+      );
 
-        error: () => {
-          this.loading.set(false);
-          this.loadError.set(true);
-        },
-      });
+      return;
+    }
+
+    this.activePatrolId.set(
+      patrolId,
+    );
+
+    this.pageIndex.set(0);
+
+    this.expandedSimulationId.set(
+      null,
+    );
+
+    this.loadHistory();
+  }
+
+  clearPatrolFilter(): void {
+    this.patrolFilter.set('');
+
+    this.activePatrolId.set(null);
+
+    this.pageIndex.set(0);
+
+    this.expandedSimulationId.set(
+      null,
+    );
+
+    this.loadHistory();
+  }
+
+  refresh(): void {
+    this.expandedSimulationId.set(
+      null,
+    );
+
+    this.loadHistory();
   }
 
   onPageChange(

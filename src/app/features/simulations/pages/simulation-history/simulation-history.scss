@@ -37,6 +37,71 @@
   color: #667085;
 }
 
+/* Filters */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-card mat-card-content {
+  padding-bottom: 8px;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  flex-wrap: wrap;
+}
+
+.patrol-filter-field {
+  width: 260px;
+}
+
+.active-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 4px;
+  padding-bottom: 12px;
+
+  color: #475569;
+
+  font-size: 0.85rem;
+}
+
+.active-filter mat-icon {
+  width: 18px;
+  height: 18px;
+
+  font-size: 18px;
+}
+
+@media (max-width: 700px) {
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .filter-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .patrol-filter-field {
+    width: 100%;
+  }
+
+  .filter-row button {
+    width: 100%;
+  }
+
+}
+
 .history-card {
   overflow: hidden;
 }

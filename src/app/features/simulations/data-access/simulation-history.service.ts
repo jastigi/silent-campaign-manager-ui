@@ -23,4 +23,21 @@ export class SimulationHistoryService {
       },
     });
   }
+
+  getHistoryByPatrol(
+    patrolId: number,
+    page: number,
+    size: number,
+  ): Observable<PageResponse<SimulationHistoryRecord>> {
+    return this.http.get<PageResponse<SimulationHistoryRecord>>(
+      `/api/v1/patrols/${patrolId}/simulations`,
+      {
+        params: {
+          page,
+          size,
+          sort: 'recordedAt,desc',
+        },
+      },
+    );
+  }
 }

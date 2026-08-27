@@ -19,7 +19,106 @@
 
     </div>
 
+    <div class="header-actions">
+
+      <button
+        mat-button
+        type="button"
+        (click)="refresh()"
+      >
+        <mat-icon>
+          refresh
+        </mat-icon>
+
+        Refresh
+      </button>
+
+    </div>
+
   </div>
+
+
+  <mat-card class="filter-card">
+
+    <mat-card-content>
+
+      <div class="filter-row">
+
+        <mat-form-field
+          appearance="outline"
+          class="patrol-filter-field"
+        >
+          <mat-label>
+            Patrol ID
+          </mat-label>
+
+          <input
+            matInput
+            inputmode="numeric"
+            [ngModel]="patrolFilter()"
+            (ngModelChange)="
+              patrolFilter.set($event)
+            "
+            (keyup.enter)="
+              applyPatrolFilter()
+            "
+          />
+
+          <mat-icon matPrefix>
+            filter_alt
+          </mat-icon>
+
+        </mat-form-field>
+
+
+        <button
+          mat-flat-button
+          type="button"
+          (click)="applyPatrolFilter()"
+        >
+          Apply
+        </button>
+
+
+        <button
+          mat-button
+          type="button"
+          [disabled]="
+            activePatrolId() === null
+          "
+          (click)="clearPatrolFilter()"
+        >
+          Clear
+        </button>
+
+      </div>
+
+
+      @if (
+        activePatrolId() !== null
+      ) {
+
+        <div class="active-filter">
+
+          <mat-icon>
+            filter_alt
+          </mat-icon>
+
+          <span>
+            Showing simulations for
+            Patrol ID
+            <strong>
+              {{ activePatrolId() }}
+            </strong>
+          </span>
+
+        </div>
+
+      }
+
+    </mat-card-content>
+
+  </mat-card>
 
 
   @if (loading()) {
@@ -66,14 +165,28 @@
 
           <div>
 
-            <strong>
-              No simulation history
-            </strong>
+<strong>
+                    No simulation history
+                  </strong>
 
-            <span>
-              Simulation records will appear here
-              after campaign simulations are executed.
-            </span>
+                  @if (
+                    activePatrolId() !== null
+                  ) {
+
+                    <span>
+                      No simulation records were found
+                      for Patrol ID
+                      {{ activePatrolId() }}.
+                    </span>
+
+                  } @else {
+
+                    <span>
+                      Simulation records will appear here
+                      after campaign simulations are executed.
+                    </span>
+
+                  }
 
           </div>
 
