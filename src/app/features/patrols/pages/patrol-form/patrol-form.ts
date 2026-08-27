@@ -59,11 +59,17 @@ export class PatrolForm {
 
   readonly saving = signal(false);
 
+  readonly loading = signal(false);
+
+  readonly loadError = signal(false);
+
   readonly submarinesLoading = signal(true);
 
   readonly submarinesError = signal(false);
 
   readonly submarines = signal<Submarine[]>([]);
+
+  readonly editing = signal(false);
 
   readonly missionTypes: MissionType[] = [
     'DETERRENCE_PATROL',
@@ -77,6 +83,8 @@ export class PatrolForm {
   ];
 
   private readonly campaignId: number;
+
+  private readonly patrolId: number | null;
 
   readonly form = this.fb.nonNullable.group({
     patrolName: ['', Validators.required],
@@ -93,8 +101,13 @@ export class PatrolForm {
   constructor() {
     const campaignId = Number(this.route.snapshot.paramMap.get('campaignId'));
 
+    const patrolIdParam = this.route.snapshot.paramMap.get('patrolId');
+
+    const patrolId = patrolIdParam ? Number(patrolIdParam) : null;
+
     if (!Number.isInteger(campaignId) || campaignId <= 0) {
       this.campaignId = 0;
+      this.patrolId = null;
 
       this.submarinesLoading.set(false);
       this.submarinesError.set(true);
@@ -104,7 +117,23 @@ export class PatrolForm {
 
     this.campaignId = campaignId;
 
+    if (patrolId !== null && (!Number.isInteger(patrolId) || patrolId <= 0)) {
+      this.patrolId = null;
+
+      this.loadError.set(true);
+
+      return;
+    }
+
+    this.patrolId = patrolId;
+
+    this.editing.set(patrolId !== null);
+
     this.loadSubmarines();
+
+    if (patrolId !== null) {
+      this.loadPatrol(patrolId);
+    }
   }
 
   private loadSubmarines(): void {
@@ -121,6 +150,53 @@ export class PatrolForm {
       error: () => {
         this.submarinesLoading.set(false);
         this.submarinesError.set(true);
+      },
+    });
+  }
+
+  private loadPatrol(patrolId: number): void {
+    this.loading.set(true);
+    this.loadError.set(false);
+
+    this.patrolService.getPatrol(patrolId).subscribe({
+      next: (patrol) => {
+        if (patrol.campaignId !== this.campaignId) {
+          this.loading.set(false);
+          this.loadError.set(true);
+
+          return;
+        }
+
+        if (patrol.result !== null) {
+          this.loading.set(false);
+
+          this.snackBar.open('Closed patrols cannot be edited.', 'Close', {
+            duration: 5000,
+          });
+
+          this.router.navigate(['/campaigns', this.campaignId, 'patrols', patrol.id]);
+
+          return;
+        }
+
+        this.form.patchValue({
+          patrolName: patrol.patrolName,
+
+          patrolDate: patrol.patrolDate,
+
+          area: patrol.area ?? '',
+
+          submarineId: patrol.submarineId,
+
+          missionType: patrol.missionType,
+        });
+
+        this.loading.set(false);
+      },
+
+      error: () => {
+        this.loading.set(false);
+        this.loadError.set(true);
       },
     });
   }
@@ -148,6 +224,32 @@ export class PatrolForm {
 
     this.saving.set(true);
 
+    if (this.editing() && this.patrolId !== null) {
+      this.patrolService.updatePatrol(this.campaignId, this.patrolId, request).subscribe({
+        next: (patrol) => {
+          this.saving.set(false);
+
+          this.snackBar.open('Patrol updated successfully.', 'Close', {
+            duration: 4000,
+          });
+
+          this.router.navigate(['/campaigns', this.campaignId, 'patrols', patrol.id]);
+        },
+
+        error: (error) => {
+          this.saving.set(false);
+
+          const message = error?.error?.message ?? 'Unable to update patrol.';
+
+          this.snackBar.open(message, 'Close', {
+            duration: 6000,
+          });
+        },
+      });
+
+      return;
+    }
+
     this.patrolService.createPatrol(this.campaignId, request).subscribe({
       next: (patrol) => {
         this.saving.set(false);
@@ -172,6 +274,12 @@ export class PatrolForm {
   }
 
   cancel(): void {
+    if (this.editing() && this.patrolId !== null) {
+      this.router.navigate(['/campaigns', this.campaignId, 'patrols', this.patrolId]);
+
+      return;
+    }
+
     this.router.navigate(['/campaigns', this.campaignId]);
   }
 

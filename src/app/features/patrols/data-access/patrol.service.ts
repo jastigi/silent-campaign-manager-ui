@@ -37,4 +37,16 @@ export class PatrolService {
   createPatrol(campaignId: number, request: PatrolRequest): Observable<Patrol> {
     return this.http.post<Patrol>(`/api/v1/campaigns/${campaignId}/patrols`, request);
   }
+
+  getPatrol(patrolId: number): Observable<Patrol> {
+    return this.http.get<Patrol>(`/api/v1/patrols/${patrolId}`);
+  }
+
+  updatePatrol(campaignId: number, patrolId: number, request: PatrolRequest): Observable<Patrol> {
+    return this.http.put<Patrol>(`/api/v1/campaigns/${campaignId}/patrols/${patrolId}`, request);
+  }
+
+  deletePatrol(campaignId: number, patrolId: number): Observable<void> {
+    return this.http.delete<void>(`/api/v1/campaigns/${campaignId}/patrols/${patrolId}`);
+  }
 }

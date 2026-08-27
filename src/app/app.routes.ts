@@ -54,6 +54,10 @@ export const routes: Routes = [
         component: PatrolForm,
       },
       {
+        path: 'campaigns/:campaignId/patrols/:patrolId/edit',
+        component: PatrolForm,
+      },
+      {
         path: 'campaigns/:campaignId/patrols/:patrolId',
         component: PatrolDetail,
       },

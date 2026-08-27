@@ -32,10 +32,32 @@
 
         @if (report.missionStatus === null) {
           <button
+            mat-button
+            type="button"
+            [disabled]="closing() || deleting()"
+            (click)="editPatrol()"
+          >
+            <mat-icon>edit</mat-icon>
+
+            <span>Edit</span>
+          </button>
+
+          <button
+            mat-button
+            type="button"
+            [disabled]="closing() || deleting()"
+            (click)="deletePatrol()"
+          >
+            <mat-icon>delete</mat-icon>
+
+            <span>{{ deleting() ? 'Deleting...' : 'Delete' }}</span>
+          </button>
+
+          <button
             mat-flat-button
             type="button"
             class="close-patrol-button"
-            [disabled]="closing()"
+            [disabled]="closing() || deleting()"
             (click)="closePatrol()"
           >
             @if (closing()) {

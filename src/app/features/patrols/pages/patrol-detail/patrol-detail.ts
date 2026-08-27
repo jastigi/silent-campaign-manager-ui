@@ -62,6 +62,8 @@ export class PatrolDetail {
 
   readonly closing = signal(false);
 
+  readonly deleting = signal(false);
+
   readonly contactColumns = ['name', 'type', 'nation', 'alignment', 'threat', 'confidence'];
 
   private campaignId = 0;
@@ -142,10 +144,60 @@ export class PatrolDetail {
     }
   }
 
+  editPatrol(): void {
+    const report = this.report();
+
+    if (!report || report.missionStatus !== null) {
+      return;
+    }
+
+    this.router.navigate(['/campaigns', this.campaignId, 'patrols', report.patrolId, 'edit']);
+  }
+
+  deletePatrol(): void {
+    const report = this.report();
+
+    if (!report || report.missionStatus !== null || this.deleting()) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Delete patrol "${report.patrolName}"?\n\nThis action cannot be undone.`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.deleting.set(true);
+
+    this.patrolService.deletePatrol(this.campaignId, report.patrolId).subscribe({
+      next: () => {
+        this.deleting.set(false);
+
+        this.snackBar.open('Patrol deleted successfully.', 'Close', {
+          duration: 4000,
+        });
+
+        this.router.navigate(['/campaigns', this.campaignId]);
+      },
+
+      error: (error) => {
+        this.deleting.set(false);
+
+        const message = error?.error?.message ?? 'Unable to delete patrol.';
+
+        this.snackBar.open(message, 'Close', {
+          duration: 6000,
+        });
+      },
+    });
+  }
+
   closePatrol(): void {
     const report = this.report();
 
-    if (!report || report.missionStatus !== null || this.closing()) {
+    if (!report || report.missionStatus !== null || this.closing() || this.deleting()) {
       return;
     }
 
