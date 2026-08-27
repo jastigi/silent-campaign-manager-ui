@@ -22,6 +22,10 @@ import { PatrolDetail } from './features/patrols/pages/patrol-detail/patrol-deta
 
 import { PatrolForm } from './features/patrols/pages/patrol-form/patrol-form';
 
+import {
+  SimulationHistory,
+} from './features/simulations/pages/simulation-history/simulation-history';
+
 export const routes: Routes = [
   {
     path: 'login',
@@ -64,6 +68,10 @@ export const routes: Routes = [
       {
         path: 'campaigns',
         component: CampaignList,
+      },
+      {
+        path: 'simulations',
+        component: SimulationHistory,
       },
       {
         path: 'submarines',

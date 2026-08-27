@@ -19,10 +19,10 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 
 import {
+  PatrolSimulationState,
   SimulationHistoryRecord,
   SimulationOutcome,
-  PatrolSimulationState,
-} from '../../models/simulation-history.model';
+} from '../../../simulations/models/simulation-history.model';
 
 import { PatrolService } from '../../data-access/patrol.service';
 

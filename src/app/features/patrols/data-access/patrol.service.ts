@@ -10,7 +10,7 @@ import { Contact } from '../models/contact.model';
 
 import { PageResponse } from '../../campaigns/models/page-response.model';
 
-import { SimulationHistoryRecord } from '../models/simulation-history.model';
+import { SimulationHistoryRecord } from '../../simulations/models/simulation-history.model';
 
 @Injectable({
   providedIn: 'root',

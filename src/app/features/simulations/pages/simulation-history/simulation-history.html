@@ -1,0 +1,356 @@
+<section class="simulation-history-page">
+
+  <div class="page-header">
+
+    <div>
+
+      <span class="page-eyebrow">
+        SIMULATIONS
+      </span>
+
+      <h1>
+        Simulation History
+      </h1>
+
+      <p>
+        Review historical operational simulations
+        across all patrols.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  @if (loading()) {
+
+    <div class="loading-state">
+      <mat-spinner
+        diameter="48"
+      ></mat-spinner>
+    </div>
+
+  } @else if (loadError()) {
+
+    <mat-card>
+
+      <mat-card-content>
+
+        <div class="error-state">
+
+          <mat-icon>
+            error_outline
+          </mat-icon>
+
+          <span>
+            Unable to load simulation history.
+          </span>
+
+        </div>
+
+      </mat-card-content>
+
+    </mat-card>
+
+  } @else if (simulations().length === 0) {
+
+    <mat-card>
+
+      <mat-card-content>
+
+        <div class="empty-state">
+
+          <mat-icon>
+            history
+          </mat-icon>
+
+          <div>
+
+            <strong>
+              No simulation history
+            </strong>
+
+            <span>
+              Simulation records will appear here
+              after campaign simulations are executed.
+            </span>
+
+          </div>
+
+        </div>
+
+      </mat-card-content>
+
+    </mat-card>
+
+  } @else {
+
+    <mat-card class="history-card">
+
+      <mat-card-content>
+
+        <div class="table-container">
+
+          <table
+            mat-table
+            [dataSource]="simulations()"
+          >
+
+            <!-- Simulation ID -->
+
+            <ng-container
+              matColumnDef="id"
+            >
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                Simulation
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let simulation"
+              >
+                <strong>
+                  #{{ simulation.id }}
+                </strong>
+              </td>
+
+            </ng-container>
+
+
+            <!-- Patrol -->
+
+            <ng-container
+              matColumnDef="patrol"
+            >
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                Patrol
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let simulation"
+              >
+
+                <div class="patrol-cell">
+
+                  <strong>
+                    {{ simulation.patrolName }}
+                  </strong>
+
+                  <span>
+                    Patrol ID
+                    {{ simulation.patrolId }}
+                  </span>
+
+                </div>
+
+              </td>
+
+            </ng-container>
+
+
+            <!-- Mission Outcome -->
+
+            <ng-container
+              matColumnDef="outcome"
+            >
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                Mission Outcome
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let simulation"
+              >
+
+                <span
+                  class="simulation-badge"
+                  [class]="simulationOutcomeClass(
+                    simulation.missionOutcome
+                  )"
+                >
+                  {{
+                    formatValue(
+                      simulation.missionOutcome
+                    )
+                  }}
+                </span>
+
+              </td>
+
+            </ng-container>
+
+
+            <!-- Score -->
+
+            <ng-container
+              matColumnDef="score"
+            >
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                Score
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let simulation"
+              >
+                <strong
+                  class="score-value"
+                >
+                  {{ simulation.missionScore }}
+                </strong>
+              </td>
+
+            </ng-container>
+
+
+            <!-- Final State -->
+
+            <ng-container
+              matColumnDef="finalState"
+            >
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                Final State
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let simulation"
+              >
+
+                <span
+                  class="simulation-badge"
+                  [class]="simulationStateClass(
+                    simulation.finalState
+                  )"
+                >
+                  {{
+                    formatValue(
+                      simulation.finalState
+                    )
+                  }}
+                </span>
+
+              </td>
+
+            </ng-container>
+
+
+            <!-- Completion Date -->
+
+            <ng-container
+              matColumnDef="completionDate"
+            >
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                Completion
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let simulation"
+              >
+                {{
+                  simulation.completionDate
+                    | date: 'dd MMM yyyy'
+                }}
+              </td>
+
+            </ng-container>
+
+
+            <!-- Recorded At -->
+
+            <ng-container
+              matColumnDef="recordedAt"
+            >
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+              >
+                Recorded
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let simulation"
+              >
+                {{
+                  simulation.recordedAt
+                    | date: 'dd MMM yyyy HH:mm'
+                }}
+              </td>
+
+            </ng-container>
+
+
+            <tr
+              mat-header-row
+              *matHeaderRowDef="
+                displayedColumns
+              "
+            ></tr>
+
+            <tr
+              mat-row
+              *matRowDef="
+                let row;
+                columns: displayedColumns
+              "
+              class="simulation-row"
+              [class.row-loading]="
+                openingPatrol() ===
+                row.patrolId
+              "
+              (click)="openPatrol(row)"
+            ></tr>
+
+          </table>
+
+        </div>
+
+
+        <mat-paginator
+          [length]="totalElements()"
+          [pageIndex]="pageIndex()"
+          [pageSize]="pageSize()"
+          [pageSizeOptions]="[
+            10,
+            25,
+            50
+          ]"
+          (page)="onPageChange($event)"
+        >
+        </mat-paginator>
+
+      </mat-card-content>
+
+    </mat-card>
+
+  }
+
+</section>

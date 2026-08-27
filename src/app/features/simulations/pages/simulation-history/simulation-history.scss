@@ -1,0 +1,234 @@
+.simulation-history-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  width: 100%;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.page-eyebrow {
+  color: #667085;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  letter-spacing: 0.05em;
+
+  text-transform: uppercase;
+}
+
+.page-header h1 {
+  margin: 4px 0 0;
+
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.page-header p {
+  margin: 6px 0 0;
+
+  color: #667085;
+}
+
+.history-card {
+  overflow: hidden;
+}
+
+.history-card mat-card-content {
+  padding: 0;
+}
+
+.table-container {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+
+  min-width: 1000px;
+}
+
+th {
+  white-space: nowrap;
+}
+
+td,
+th {
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.simulation-row {
+  cursor: pointer;
+
+  transition:
+    background-color
+    120ms ease;
+}
+
+.simulation-row:hover {
+  background: #f8fafc;
+}
+
+.simulation-row.row-loading {
+  cursor: wait;
+
+  opacity: 0.65;
+}
+
+.patrol-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.patrol-cell span {
+  color: #667085;
+
+  font-size: 0.78rem;
+}
+
+.score-value {
+  font-size: 1rem;
+}
+
+.simulation-badge {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+/*
+ * Mission outcome
+ */
+
+.simulation-outcome-success {
+  color: #166534;
+
+  background: #dcfce7;
+
+  border: 1px solid #86efac;
+}
+
+.simulation-outcome-partial-success {
+  color: #92400e;
+
+  background: #fef3c7;
+
+  border: 1px solid #fcd34d;
+}
+
+.simulation-outcome-failure {
+  color: #991b1b;
+
+  background: #fee2e2;
+
+  border: 1px solid #fca5a5;
+}
+
+/*
+ * Simulation state
+ */
+
+.simulation-state-not-started {
+  color: #475569;
+
+  background: #e2e8f0;
+
+  border: 1px solid #cbd5e1;
+}
+
+.simulation-state-transit,
+.simulation-state-on-patrol,
+.simulation-state-returning {
+  color: #1e40af;
+
+  background: #dbeafe;
+
+  border: 1px solid #93c5fd;
+}
+
+.simulation-state-completed {
+  color: #166534;
+
+  background: #dcfce7;
+
+  border: 1px solid #86efac;
+}
+
+/*
+ * States
+ */
+
+.loading-state {
+  display: grid;
+
+  min-height: 300px;
+
+  place-items: center;
+}
+
+.error-state {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  min-height: 70px;
+
+  color: #991b1b;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  min-height: 100px;
+
+  color: #64748b;
+}
+
+.empty-state mat-icon {
+  width: 32px;
+  height: 32px;
+
+  font-size: 32px;
+}
+
+.empty-state > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.empty-state strong {
+  color: #334155;
+}
+
+@media (max-width: 700px) {
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+}
