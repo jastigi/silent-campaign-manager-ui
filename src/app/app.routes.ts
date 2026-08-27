@@ -38,8 +38,12 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'campaigns',
-        pathMatch: 'full',
+        loadComponent: () =>
+          import(
+            './features/dashboard/pages/dashboard/dashboard'
+          ).then(
+            (m) => m.Dashboard,
+          ),
       },
       {
         path: 'campaigns/new',

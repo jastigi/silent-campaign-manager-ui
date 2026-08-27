@@ -1,0 +1,346 @@
+<div class="dashboard-page">
+
+  <header class="page-header">
+
+    <div>
+      <span class="eyebrow">
+        OPERATIONAL OVERVIEW
+      </span>
+
+      <h1>
+        Dashboard
+      </h1>
+
+      <p>
+        Current campaign activity and
+        simulation overview.
+      </p>
+    </div>
+
+
+    <button
+      mat-button
+      type="button"
+      (click)="refresh()"
+    >
+      <mat-icon>
+        refresh
+      </mat-icon>
+
+      Refresh
+    </button>
+
+  </header>
+
+
+  @if (loading()) {
+
+    <div class="state-container">
+
+      <mat-spinner
+        diameter="42"
+      ></mat-spinner>
+
+      <span>
+        Loading operational data...
+      </span>
+
+    </div>
+
+  } @else if (loadError()) {
+
+    <mat-card class="state-card">
+
+      <mat-card-content>
+
+        <mat-icon>
+          error_outline
+        </mat-icon>
+
+        <div>
+          <strong>
+            Unable to load dashboard
+          </strong>
+
+          <span>
+            Operational data could not
+            be retrieved.
+          </span>
+        </div>
+
+        <button
+          mat-button
+          type="button"
+          (click)="refresh()"
+        >
+          Retry
+        </button>
+
+      </mat-card-content>
+
+    </mat-card>
+
+  } @else {
+
+    <section class="metrics-grid">
+
+      <mat-card
+        class="metric-card campaigns"
+        (click)="openCampaigns()"
+      >
+
+        <mat-card-content>
+
+          <div class="metric-icon">
+            <mat-icon>
+              flag
+            </mat-icon>
+          </div>
+
+          <div class="metric-content">
+
+            <span>
+              Campaigns
+            </span>
+
+            <strong>
+              {{ totalCampaigns() }}
+            </strong>
+
+            <small>
+              View campaign operations
+            </small>
+
+          </div>
+
+        </mat-card-content>
+
+      </mat-card>
+
+
+      <mat-card
+        class="metric-card submarines"
+        (click)="openSubmarines()"
+      >
+
+        <mat-card-content>
+
+          <div class="metric-icon">
+            <mat-icon>
+              directions_boat
+            </mat-icon>
+          </div>
+
+          <div class="metric-content">
+
+            <span>
+              Submarines
+            </span>
+
+            <strong>
+              {{ totalSubmarines() }}
+            </strong>
+
+            <small>
+              View submarine fleet
+            </small>
+
+          </div>
+
+        </mat-card-content>
+
+      </mat-card>
+
+
+      <mat-card
+        class="metric-card simulations"
+        (click)="openSimulations()"
+      >
+
+        <mat-card-content>
+
+          <div class="metric-icon">
+            <mat-icon>
+              history
+            </mat-icon>
+          </div>
+
+          <div class="metric-content">
+
+            <span>
+              Simulations
+            </span>
+
+            <strong>
+              {{ totalSimulations() }}
+            </strong>
+
+            <small>
+              View simulation history
+            </small>
+
+          </div>
+
+        </mat-card-content>
+
+      </mat-card>
+
+    </section>
+
+
+    <section class="recent-section">
+
+      <div class="section-header">
+
+        <div>
+          <h2>
+            Recent Simulations
+          </h2>
+
+          <p>
+            Latest simulation records
+            across all patrols.
+          </p>
+        </div>
+
+
+        <button
+          mat-button
+          type="button"
+          (click)="openSimulations()"
+        >
+          View all
+
+          <mat-icon>
+            arrow_forward
+          </mat-icon>
+        </button>
+
+      </div>
+
+
+      @if (
+        recentSimulations().length === 0
+      ) {
+
+        <mat-card class="empty-card">
+
+          <mat-card-content>
+
+            <mat-icon>
+              history
+            </mat-icon>
+
+            <div>
+              <strong>
+                No simulation history
+              </strong>
+
+              <span>
+                Simulation records will
+                appear here after campaign
+                simulations are executed.
+              </span>
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+      } @else {
+
+        <div class="simulation-list">
+
+          @for (
+            simulation of recentSimulations();
+            track simulation.id
+          ) {
+
+            <mat-card
+              class="simulation-card"
+            >
+
+              <mat-card-content>
+
+                <div class="simulation-main">
+
+                  <div class="simulation-id">
+                    SIMULATION
+                    #{{ simulation.id }}
+                  </div>
+
+                  <strong class="patrol-name">
+                    {{ simulation.patrolName }}
+                  </strong>
+
+                  <span class="simulation-date">
+                    {{
+                      simulation.recordedAt
+                        | date:'dd MMM yyyy HH:mm'
+                    }}
+                  </span>
+
+                </div>
+
+
+                <div class="simulation-score">
+
+                  <span>
+                    SCORE
+                  </span>
+
+                  <strong>
+                    {{ simulation.missionScore }}
+                  </strong>
+
+                </div>
+
+
+                <div class="simulation-status">
+
+                  <span
+                    class="status-badge"
+                    [class]="
+                      'status-badge ' +
+                      outcomeClass(
+                        simulation.missionOutcome
+                      )
+                    "
+                  >
+                    {{
+                      simulation.missionOutcome
+                    }}
+                  </span>
+
+
+                  <span
+                    class="status-badge"
+                    [class]="
+                      'status-badge ' +
+                      finalStateClass(
+                        simulation.finalState
+                      )
+                    "
+                  >
+                    {{
+                      simulation.finalState
+                    }}
+                  </span>
+
+                </div>
+
+              </mat-card-content>
+
+            </mat-card>
+
+          }
+
+        </div>
+
+      }
+
+    </section>
+
+  }
+
+</div>
