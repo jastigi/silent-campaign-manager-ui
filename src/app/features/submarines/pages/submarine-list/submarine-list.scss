@@ -132,3 +132,30 @@ table {
   align-items: center;
   gap: 12px;
 }
+
+.fleet-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.fleet-filters mat-form-field {
+  width: 220px;
+}
+
+.fleet-filters
+  .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .fleet-filters {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .fleet-filters mat-form-field {
+    width: 100%;
+  }
+}

@@ -26,6 +26,59 @@
     </div>
   </div>
 
+  <div class="fleet-filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+
+      <mat-select
+        [value]="selectedStatus()"
+        (selectionChange)="onStatusChange($event.value)"
+      >
+        @for (
+          option of statusOptions;
+          track option.value
+        ) {
+          <mat-option [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Role</mat-label>
+
+      <mat-select
+        [value]="selectedRole()"
+        (selectionChange)="onRoleChange($event.value)"
+      >
+        @for (
+          option of roleOptions;
+          track option.value
+        ) {
+          <mat-option [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (
+      selectedStatus() !== 'ALL' ||
+      selectedRole() !== 'ALL'
+    ) {
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="clearFilters()"
+      >
+        <mat-icon>filter_alt_off</mat-icon>
+
+        <span>Clear filters</span>
+      </button>
+    }
+  </div>
+
   @if (loading()) {
     <div class="loading-state">
       <mat-spinner diameter="48"></mat-spinner>
@@ -39,15 +92,39 @@
           <div class="empty-state">
             <mat-icon>directions_boat</mat-icon>
 
-            <h2>No submarines yet</h2>
+            @if (allSubmarines().length === 0) {
+              <h2>No submarines yet</h2>
 
-            <p>Add the first submarine to begin building the operational fleet.</p>
+              <p>
+                Add the first submarine to begin building the operational fleet.
+              </p>
 
-            <button mat-flat-button type="button" (click)="createSubmarine()">
-              <mat-icon>add</mat-icon>
+              <button
+                mat-flat-button
+                type="button"
+                (click)="createSubmarine()"
+              >
+                <mat-icon>add</mat-icon>
 
-              <span>New Submarine</span>
-            </button>
+                <span>New Submarine</span>
+              </button>
+            } @else {
+              <h2>No submarines match these filters</h2>
+
+              <p>
+                Try changing the selected status or role.
+              </p>
+
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="clearFilters()"
+              >
+                <mat-icon>filter_alt_off</mat-icon>
+
+                <span>Clear filters</span>
+              </button>
+            }
           </div>
         } @else {
           <table mat-table [dataSource]="submarines()">
