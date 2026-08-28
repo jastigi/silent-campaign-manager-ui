@@ -258,6 +258,14 @@
 
             <mat-card
               class="simulation-card"
+              [class.simulation-card-loading]="
+                openingPatrol() === simulation.patrolId
+              "
+              tabindex="0"
+              role="button"
+              (click)="openSimulationPatrol(simulation)"
+              (keyup.enter)="openSimulationPatrol(simulation)"
+              (keyup.space)="openSimulationPatrol(simulation)"
             >
 
               <mat-card-content>
@@ -278,6 +286,23 @@
                       simulation.recordedAt
                         | date:'dd MMM yyyy HH:mm'
                     }}
+                  </span>
+
+                  <span class="open-patrol-hint">
+
+                    @if (
+                      openingPatrol() ===
+                      simulation.patrolId
+                    ) {
+
+                      Opening patrol...
+
+                    } @else {
+
+                      Open patrol details
+
+                    }
+
                   </span>
 
                 </div>
