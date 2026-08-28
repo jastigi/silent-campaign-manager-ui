@@ -27,6 +27,20 @@
   gap: 12px;
 }
 
+.campaign-filters {
+  display: flex;
+  align-items: center;
+}
+
+.campaign-filters mat-form-field {
+  width: 240px;
+}
+
+.campaign-filters
+  .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
 .table-container {
   overflow: hidden;
 

@@ -4,7 +4,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
-import { Campaign, CampaignDetails, CampaignRequest } from '../models/campaign.model';
+import {
+  Campaign,
+  CampaignDetails,
+  CampaignRequest,
+  CampaignStatus,
+} from '../models/campaign.model';
 
 import { PageResponse } from '../models/page-response.model';
 
@@ -55,6 +60,14 @@ export class CampaignService {
     return this.http.get<PageResponse<Campaign>>(this.baseUrl, {
       params,
     });
+  }
+
+  getCampaignsByStatus(
+    status: CampaignStatus,
+  ): Observable<Campaign[]> {
+    return this.http.get<Campaign[]>(
+      `${this.baseUrl}/status/${status}`,
+    );
   }
 
   getCampaignDetails(id: number): Observable<CampaignDetails> {

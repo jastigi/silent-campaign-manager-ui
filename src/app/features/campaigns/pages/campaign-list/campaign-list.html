@@ -26,6 +26,26 @@
     </div>
   </div>
 
+  <div class="campaign-filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+
+      <mat-select
+        [value]="selectedStatus()"
+        (selectionChange)="onStatusChange($event.value)"
+      >
+        @for (
+          option of statusOptions;
+          track option.value
+        ) {
+          <mat-option [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
   @if (loading()) {
     <div class="loading-state">
       <mat-spinner diameter="48"></mat-spinner>
@@ -36,15 +56,33 @@
     <div class="empty-state">
       <mat-icon>campaign</mat-icon>
 
-      <h2>No campaigns yet</h2>
+      @if (selectedStatus() === 'ALL') {
+        <h2>No campaigns yet</h2>
 
-      <p>Create your first campaign to begin planning submarine operations.</p>
+        <p>
+          Create your first campaign to begin planning submarine operations.
+        </p>
 
-      <button mat-flat-button type="button" (click)="createCampaign()">
-        <mat-icon>add</mat-icon>
+        <button
+          mat-flat-button
+          type="button"
+          (click)="createCampaign()"
+        >
+          <mat-icon>add</mat-icon>
 
-        <span>New Campaign</span>
-      </button>
+          <span>
+            New Campaign
+          </span>
+        </button>
+      } @else {
+        <h2>
+          No {{ selectedStatus().toLowerCase() }} campaigns
+        </h2>
+
+        <p>
+          There are currently no campaigns with this status.
+        </p>
+      }
     </div>
   } @else {
     <div class="table-container">
