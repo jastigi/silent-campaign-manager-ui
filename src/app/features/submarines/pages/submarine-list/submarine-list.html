@@ -6,7 +6,24 @@
       <p>Fleet inventory and operational status.</p>
     </div>
 
-    <button mat-flat-button type="button" (click)="createSubmarine()">New Submarine</button>
+    <div class="page-actions">
+      <button
+        mat-stroked-button
+        type="button"
+        [disabled]="loading()"
+        (click)="refresh()"
+      >
+        <mat-icon>refresh</mat-icon>
+
+        <span>Refresh</span>
+      </button>
+
+      <button mat-flat-button type="button" (click)="createSubmarine()">
+        <mat-icon>add</mat-icon>
+
+        <span>New Submarine</span>
+      </button>
+    </div>
   </div>
 
   @if (loading()) {
@@ -19,7 +36,19 @@
     <mat-card>
       <mat-card-content>
         @if (submarines().length === 0) {
-          <p class="empty-state">No submarines are currently available.</p>
+          <div class="empty-state">
+            <mat-icon>directions_boat</mat-icon>
+
+            <h2>No submarines yet</h2>
+
+            <p>Add the first submarine to begin building the operational fleet.</p>
+
+            <button mat-flat-button type="button" (click)="createSubmarine()">
+              <mat-icon>add</mat-icon>
+
+              <span>New Submarine</span>
+            </button>
+          </div>
         } @else {
           <table mat-table [dataSource]="submarines()">
             <ng-container matColumnDef="id">

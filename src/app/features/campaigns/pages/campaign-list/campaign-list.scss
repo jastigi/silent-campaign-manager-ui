@@ -21,6 +21,12 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .table-container {
   overflow: hidden;
 
@@ -49,6 +55,45 @@ table {
   color: var(--mat-sys-error);
 
   background: var(--mat-sys-error-container);
+}
+
+.empty-state {
+  display: flex;
+  min-height: 280px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  padding: 32px;
+
+  border-radius: 12px;
+
+  text-align: center;
+
+  background: var(--mat-sys-surface);
+
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+.empty-state > mat-icon {
+  width: 48px;
+  height: 48px;
+
+  color: var(--mat-sys-primary);
+
+  font-size: 48px;
+}
+
+.empty-state h2 {
+  margin: 0;
+}
+
+.empty-state p {
+  max-width: 440px;
+  margin: 0 0 8px;
+
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .campaign-row {

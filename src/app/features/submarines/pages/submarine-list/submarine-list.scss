@@ -36,8 +36,34 @@
 }
 
 .empty-state {
+  display: flex;
+  min-height: 240px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  padding: 32px;
+
+  text-align: center;
+}
+
+.empty-state > mat-icon {
+  width: 48px;
+  height: 48px;
+
+  color: var(--mat-sys-primary);
+
+  font-size: 48px;
+}
+
+.empty-state h2 {
   margin: 0;
-  padding: 16px 0;
+}
+
+.empty-state p {
+  max-width: 440px;
+  margin: 0 0 8px;
 
   color: #667085;
 }
@@ -99,4 +125,10 @@ table {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }

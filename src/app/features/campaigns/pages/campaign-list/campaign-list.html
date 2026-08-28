@@ -6,11 +6,24 @@
       <p>Manage submarine campaigns and operational activity.</p>
     </div>
 
-    <button mat-flat-button type="button" (click)="createCampaign()">
-      <mat-icon>add</mat-icon>
+    <div class="page-actions">
+      <button
+        mat-stroked-button
+        type="button"
+        [disabled]="loading()"
+        (click)="refresh()"
+      >
+        <mat-icon>refresh</mat-icon>
 
-      <span>New Campaign</span>
-    </button>
+        <span>Refresh</span>
+      </button>
+
+      <button mat-flat-button type="button" (click)="createCampaign()">
+        <mat-icon>add</mat-icon>
+
+        <span>New Campaign</span>
+      </button>
+    </div>
   </div>
 
   @if (loading()) {
@@ -19,6 +32,20 @@
     </div>
   } @else if (loadError()) {
     <div class="error-state">Unable to load campaigns.</div>
+  } @else if (campaigns().length === 0) {
+    <div class="empty-state">
+      <mat-icon>campaign</mat-icon>
+
+      <h2>No campaigns yet</h2>
+
+      <p>Create your first campaign to begin planning submarine operations.</p>
+
+      <button mat-flat-button type="button" (click)="createCampaign()">
+        <mat-icon>add</mat-icon>
+
+        <span>New Campaign</span>
+      </button>
+    </div>
   } @else {
     <div class="table-container">
       <table mat-table [dataSource]="campaigns()">

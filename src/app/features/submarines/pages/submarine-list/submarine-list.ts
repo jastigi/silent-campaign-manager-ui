@@ -6,6 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { MatCardModule } from '@angular/material/card';
 
+import { MatIconModule } from '@angular/material/icon';
+
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { MatTableModule } from '@angular/material/table';
@@ -16,7 +18,13 @@ import { Submarine, SubmarineStatus } from '../../models/submarine.model';
 
 @Component({
   selector: 'app-submarine-list',
-  imports: [MatButtonModule, MatCardModule, MatProgressSpinnerModule, MatTableModule],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatTableModule,
+  ],
   templateUrl: './submarine-list.html',
   styleUrl: './submarine-list.scss',
 })
@@ -57,6 +65,10 @@ export class SubmarineList {
 
   openSubmarine(submarine: Submarine): void {
     this.router.navigate(['/submarines', submarine.id]);
+  }
+
+  refresh(): void {
+    this.loadSubmarines();
   }
 
   createSubmarine(): void {

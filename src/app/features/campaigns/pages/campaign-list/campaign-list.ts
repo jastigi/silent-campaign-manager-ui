@@ -77,6 +77,10 @@ export class CampaignList {
     });
   }
 
+  refresh(): void {
+    this.loadCampaigns();
+  }
+
   onPageChange(event: PageEvent): void {
     this.pageIndex.set(event.pageIndex);
 
