@@ -83,7 +83,16 @@
 
             <div class="campaign-status-grid">
 
-              <div class="campaign-status active">
+              <button
+                class="campaign-status active"
+                type="button"
+                (click)="
+                  openCampaignsByStatus(
+                    'ACTIVE',
+                    $event
+                  )
+                "
+              >
                 <span class="status-value">
                   {{ activeCampaigns() }}
                 </span>
@@ -91,9 +100,18 @@
                 <span class="status-label">
                   Active
                 </span>
-              </div>
+              </button>
 
-              <div class="campaign-status finished">
+              <button
+                class="campaign-status finished"
+                type="button"
+                (click)="
+                  openCampaignsByStatus(
+                    'FINISHED',
+                    $event
+                  )
+                "
+              >
                 <span class="status-value">
                   {{ finishedCampaigns() }}
                 </span>
@@ -101,9 +119,18 @@
                 <span class="status-label">
                   Finished
                 </span>
-              </div>
+              </button>
 
-              <div class="campaign-status abandoned">
+              <button
+                class="campaign-status abandoned"
+                type="button"
+                (click)="
+                  openCampaignsByStatus(
+                    'ABANDONED',
+                    $event
+                  )
+                "
+              >
                 <span class="status-value">
                   {{ abandonedCampaigns() }}
                 </span>
@@ -111,7 +138,7 @@
                 <span class="status-label">
                   Abandoned
                 </span>
-              </div>
+              </button>
 
             </div>
 

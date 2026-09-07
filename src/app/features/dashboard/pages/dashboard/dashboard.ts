@@ -156,6 +156,22 @@ export class Dashboard implements OnInit {
     ]);
   }
 
+  openCampaignsByStatus(
+    status: 'ACTIVE' | 'FINISHED' | 'ABANDONED',
+    event: Event,
+  ): void {
+    event.stopPropagation();
+
+    this.router.navigate(
+      ['/campaigns'],
+      {
+        queryParams: {
+          status,
+        },
+      },
+    );
+  }
+
   openSubmarines(): void {
     this.router.navigate([
       '/submarines',

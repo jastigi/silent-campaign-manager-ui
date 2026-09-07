@@ -25,7 +25,10 @@ import {
   CampaignStatus,
 } from '../../models/campaign.model';
 
-import { Router } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router,
+} from '@angular/router';
 
 @Component({
   selector: 'app-campaign-list',
@@ -47,6 +50,8 @@ export class CampaignList {
   private readonly campaignService = inject(CampaignService);
 
   private readonly router = inject(Router);
+
+  private readonly route = inject(ActivatedRoute);
 
   readonly campaigns = signal<Campaign[]>([]);
 
@@ -91,6 +96,17 @@ export class CampaignList {
   readonly displayedColumns = ['id', 'name', 'startDate', 'status'];
 
   constructor() {
+    const status =
+      this.route.snapshot.queryParamMap.get('status');
+
+    if (
+      status === 'ACTIVE' ||
+      status === 'FINISHED' ||
+      status === 'ABANDONED'
+    ) {
+      this.selectedStatus.set(status);
+    }
+
     this.loadCampaigns();
   }
 
