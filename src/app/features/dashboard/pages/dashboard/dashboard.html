@@ -1,250 +1,221 @@
 <div class="dashboard-page">
 
-  <header class="page-header">
-
+  <div class="dashboard-header">
     <div>
-      <span class="eyebrow">
-        OPERATIONAL OVERVIEW
-      </span>
-
-      <h1>
-        Dashboard
-      </h1>
-
+      <h1>Operational Dashboard</h1>
       <p>
-        Current campaign activity and
-        simulation overview.
+        Current campaign, fleet and simulation overview.
       </p>
     </div>
 
-
     <button
-      mat-button
+      mat-stroked-button
       type="button"
       (click)="refresh()"
+      [disabled]="loading()"
     >
-      <mat-icon>
-        refresh
-      </mat-icon>
-
+      <mat-icon>refresh</mat-icon>
       Refresh
     </button>
-
-  </header>
-
+  </div>
 
   @if (loading()) {
-
-    <div class="state-container">
-
-      <mat-spinner
-        diameter="42"
-      ></mat-spinner>
-
-      <span>
-        Loading operational data...
-      </span>
-
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
     </div>
-
   } @else if (loadError()) {
-
-    <mat-card class="state-card">
-
+    <mat-card class="error-card">
       <mat-card-content>
-
-        <mat-icon>
-          error_outline
-        </mat-icon>
+        <mat-icon>error_outline</mat-icon>
 
         <div>
-          <strong>
-            Unable to load dashboard
-          </strong>
-
-          <span>
-            Operational data could not
-            be retrieved.
-          </span>
+          <h2>Unable to load dashboard</h2>
+          <p>
+            Dashboard data could not be retrieved.
+          </p>
         </div>
 
         <button
-          mat-button
+          mat-stroked-button
           type="button"
           (click)="refresh()"
         >
-          Retry
+          Try Again
         </button>
-
       </mat-card-content>
-
     </mat-card>
-
   } @else {
 
     <section class="metrics-grid">
 
       <mat-card
-        class="metric-card campaigns"
+        class="metric-card campaign-card"
+        tabindex="0"
+        role="button"
         (click)="openCampaigns()"
+        (keydown.enter)="openCampaigns()"
       >
+        <mat-card-content class="campaign-card-content">
 
-        <mat-card-content>
+          <div class="campaign-identity">
+            <div class="metric-icon">
+              <mat-icon>flag</mat-icon>
+            </div>
 
-          <div class="metric-icon">
-            <mat-icon>
-              flag
-            </mat-icon>
-          </div>
-
-          <div class="metric-content">
-
-            <span>
+            <span class="metric-label">
               Campaigns
             </span>
+          </div>
 
-            <strong>
-              {{ totalCampaigns() }}
-            </strong>
+          <div class="campaign-data">
 
-            <small>
-              View campaign operations
-            </small>
+            <div class="campaign-total">
+              <span class="campaign-total-value">
+                {{ totalCampaigns() }}
+              </span>
+
+              <span class="campaign-total-label">
+                Total
+              </span>
+            </div>
+
+            <div class="campaign-divider"></div>
+
+            <div class="campaign-status-grid">
+
+              <div class="campaign-status active">
+                <span class="status-value">
+                  {{ activeCampaigns() }}
+                </span>
+
+                <span class="status-label">
+                  Active
+                </span>
+              </div>
+
+              <div class="campaign-status finished">
+                <span class="status-value">
+                  {{ finishedCampaigns() }}
+                </span>
+
+                <span class="status-label">
+                  Finished
+                </span>
+              </div>
+
+              <div class="campaign-status abandoned">
+                <span class="status-value">
+                  {{ abandonedCampaigns() }}
+                </span>
+
+                <span class="status-label">
+                  Abandoned
+                </span>
+              </div>
+
+            </div>
 
           </div>
 
         </mat-card-content>
-
       </mat-card>
 
-
       <mat-card
-        class="metric-card submarines"
+        class="metric-card"
+        tabindex="0"
+        role="button"
         (click)="openSubmarines()"
+        (keydown.enter)="openSubmarines()"
       >
-
         <mat-card-content>
 
-          <div class="metric-icon">
-            <mat-icon>
-              directions_boat
-            </mat-icon>
-          </div>
+          <div class="metric-header">
+            <div class="metric-icon">
+              <mat-icon>directions_boat</mat-icon>
+            </div>
 
-          <div class="metric-content">
-
-            <span>
+            <span class="metric-label">
               Submarines
             </span>
+          </div>
 
-            <strong>
-              {{ totalSubmarines() }}
-            </strong>
+          <div class="metric-value">
+            {{ totalSubmarines() }}
+          </div>
 
-            <small>
-              View submarine fleet
-            </small>
-
+          <div class="metric-action">
+            View fleet
+            <mat-icon>arrow_forward</mat-icon>
           </div>
 
         </mat-card-content>
-
       </mat-card>
 
-
       <mat-card
-        class="metric-card simulations"
+        class="metric-card"
+        tabindex="0"
+        role="button"
         (click)="openSimulations()"
+        (keydown.enter)="openSimulations()"
       >
-
         <mat-card-content>
 
-          <div class="metric-icon">
-            <mat-icon>
-              history
-            </mat-icon>
-          </div>
+          <div class="metric-header">
+            <div class="metric-icon">
+              <mat-icon>history</mat-icon>
+            </div>
 
-          <div class="metric-content">
-
-            <span>
+            <span class="metric-label">
               Simulations
             </span>
+          </div>
 
-            <strong>
-              {{ totalSimulations() }}
-            </strong>
+          <div class="metric-value">
+            {{ totalSimulations() }}
+          </div>
 
-            <small>
-              View simulation history
-            </small>
-
+          <div class="metric-action">
+            View history
+            <mat-icon>arrow_forward</mat-icon>
           </div>
 
         </mat-card-content>
-
       </mat-card>
 
     </section>
 
-
     <section class="recent-section">
 
       <div class="section-header">
-
         <div>
-          <h2>
-            Recent Simulations
-          </h2>
-
+          <h2>Recent Simulations</h2>
           <p>
-            Latest simulation records
-            across all patrols.
+            Latest operational simulation records.
           </p>
         </div>
-
 
         <button
           mat-button
           type="button"
           (click)="openSimulations()"
         >
-          View all
-
-          <mat-icon>
-            arrow_forward
-          </mat-icon>
+          View All
+          <mat-icon>arrow_forward</mat-icon>
         </button>
-
       </div>
 
-
-      @if (
-        recentSimulations().length === 0
-      ) {
+      @if (recentSimulations().length === 0) {
 
         <mat-card class="empty-card">
-
           <mat-card-content>
+            <mat-icon>history</mat-icon>
 
-            <mat-icon>
-              history
-            </mat-icon>
+            <h3>No simulation history</h3>
 
-            <div>
-              <strong>
-                No simulation history
-              </strong>
-
-              <span>
-                Simulation records will
-                appear here after campaign
-                simulations are executed.
-              </span>
-            </div>
-
+            <p>
+              No simulations have been recorded yet.
+            </p>
           </mat-card-content>
-
         </mat-card>
 
       } @else {
@@ -255,109 +226,114 @@
             simulation of recentSimulations();
             track simulation.id
           ) {
-
             <mat-card
               class="simulation-card"
-              [class.simulation-card-loading]="
-                openingPatrol() === simulation.patrolId
-              "
               tabindex="0"
               role="button"
               (click)="openSimulationPatrol(simulation)"
-              (keyup.enter)="openSimulationPatrol(simulation)"
-              (keyup.space)="openSimulationPatrol(simulation)"
+              (keydown.enter)="openSimulationPatrol(simulation)"
             >
-
               <mat-card-content>
 
                 <div class="simulation-main">
 
-                  <div class="simulation-id">
-                    SIMULATION
-                    #{{ simulation.id }}
+                  <div>
+                    <h3>
+                      {{ simulation.patrolName }}
+                    </h3>
+
+                    <p class="simulation-date">
+                      {{
+                        simulation.recordedAt
+                          | date:'medium'
+                      }}
+                    </p>
                   </div>
 
-                  <strong class="patrol-name">
-                    {{ simulation.patrolName }}
-                  </strong>
+                  <div class="simulation-badges">
 
-                  <span class="simulation-date">
-                    {{
-                      simulation.recordedAt
-                        | date:'dd MMM yyyy HH:mm'
-                    }}
-                  </span>
+                    <span
+                      class="badge"
+                      [class]="
+                        'badge ' +
+                        outcomeClass(
+                          simulation.missionOutcome
+                        )
+                      "
+                    >
+                      {{ simulation.missionOutcome }}
+                    </span>
 
-                  <span class="open-patrol-hint">
+                    <span
+                      class="badge"
+                      [class]="
+                        'badge ' +
+                        finalStateClass(
+                          simulation.finalState
+                        )
+                      "
+                    >
+                      {{ simulation.finalState }}
+                    </span>
 
-                    @if (
-                      openingPatrol() ===
-                      simulation.patrolId
-                    ) {
-
-                      Opening patrol...
-
-                    } @else {
-
-                      Open patrol details
-
-                    }
-
-                  </span>
-
-                </div>
-
-
-                <div class="simulation-score">
-
-                  <span>
-                    SCORE
-                  </span>
-
-                  <strong>
-                    {{ simulation.missionScore }}
-                  </strong>
+                  </div>
 
                 </div>
 
+                <div class="simulation-details">
 
-                <div class="simulation-status">
+                  <div>
+                    <span class="detail-label">
+                      Score
+                    </span>
 
-                  <span
-                    class="status-badge"
-                    [class]="
-                      'status-badge ' +
-                      outcomeClass(
-                        simulation.missionOutcome
-                      )
-                    "
-                  >
-                    {{
-                      simulation.missionOutcome
-                    }}
-                  </span>
+                    <span class="detail-value">
+                      {{ simulation.missionScore }}
+                    </span>
+                  </div>
 
+                  <div>
+                    <span class="detail-label">
+                      Detected
+                    </span>
 
-                  <span
-                    class="status-badge"
-                    [class]="
-                      'status-badge ' +
-                      finalStateClass(
-                        simulation.finalState
-                      )
-                    "
-                  >
-                    {{
-                      simulation.finalState
-                    }}
-                  </span>
+                    <span class="detail-value">
+                      {{ simulation.contactsDetected }}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span class="detail-label">
+                      Lost
+                    </span>
+
+                    <span class="detail-value">
+                      {{ simulation.contactsLost }}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span class="detail-label">
+                      Intelligence
+                    </span>
+
+                    <span class="detail-value">
+                      {{ simulation.intelligenceGathered }}
+                    </span>
+                  </div>
 
                 </div>
+
+                @if (
+                  openingPatrol() === simulation.patrolId
+                ) {
+                  <div class="opening-patrol">
+                    Opening patrol...
+                  </div>
+                }
 
               </mat-card-content>
-
             </mat-card>
-
           }
 
         </div>
@@ -365,7 +341,6 @@
       }
 
     </section>
-
   }
 
 </div>

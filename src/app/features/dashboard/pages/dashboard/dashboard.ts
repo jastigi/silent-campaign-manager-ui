@@ -38,6 +38,10 @@ export class Dashboard implements OnInit {
   readonly loadError = signal(false);
 
   readonly totalCampaigns = signal(0);
+  readonly activeCampaigns = signal(0);
+  readonly finishedCampaigns = signal(0);
+  readonly abandonedCampaigns = signal(0);
+
   readonly totalSubmarines = signal(0);
   readonly totalSimulations = signal(0);
 
@@ -72,6 +76,21 @@ export class Dashboard implements OnInit {
         'asc',
       ),
 
+      activeCampaigns:
+        this.campaignService.getCampaignsByStatus(
+          'ACTIVE',
+        ),
+
+      finishedCampaigns:
+        this.campaignService.getCampaignsByStatus(
+          'FINISHED',
+        ),
+
+      abandonedCampaigns:
+        this.campaignService.getCampaignsByStatus(
+          'ABANDONED',
+        ),
+
       submarines:
         this.submarineService.getSubmarines(),
 
@@ -83,11 +102,26 @@ export class Dashboard implements OnInit {
     }).subscribe({
       next: ({
         campaigns,
+        activeCampaigns,
+        finishedCampaigns,
+        abandonedCampaigns,
         submarines,
         simulations,
       }) => {
         this.totalCampaigns.set(
           campaigns.totalElements,
+        );
+
+        this.activeCampaigns.set(
+          activeCampaigns.length,
+        );
+
+        this.finishedCampaigns.set(
+          finishedCampaigns.length,
+        );
+
+        this.abandonedCampaigns.set(
+          abandonedCampaigns.length,
         );
 
         this.totalSubmarines.set(
