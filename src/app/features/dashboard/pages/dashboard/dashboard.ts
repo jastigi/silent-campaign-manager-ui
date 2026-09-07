@@ -206,6 +206,22 @@ export class Dashboard implements OnInit {
     ]);
   }
 
+  openSubmarinesByStatus(
+    status: 'ACTIVE' | 'REFIT' | 'DAMAGED' | 'RETIRED',
+    event: Event,
+  ): void {
+    event.stopPropagation();
+
+    this.router.navigate(
+      ['/submarines'],
+      {
+        queryParams: {
+          status,
+        },
+      },
+    );
+  }
+
   openSimulations(): void {
     this.router.navigate([
       '/simulations',

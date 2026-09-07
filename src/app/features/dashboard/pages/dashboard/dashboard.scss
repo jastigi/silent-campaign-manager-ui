@@ -494,6 +494,11 @@
   }
 
   .submarine-status {
+    appearance: none;
+    font: inherit;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
     min-width: 0;
     padding: 0 0.4rem;
     text-align: center;
@@ -505,6 +510,16 @@
 
     &:nth-child(even) {
       padding-right: 0;
+    }
+
+    &:hover {
+      background: var(--mat-sys-surface-container-high);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--mat-sys-primary);
+      outline-offset: 2px;
+      border-radius: 4px;
     }
   }
 

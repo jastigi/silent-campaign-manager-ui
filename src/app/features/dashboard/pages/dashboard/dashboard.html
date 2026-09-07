@@ -182,45 +182,77 @@
 
             <div class="submarine-status-grid">
 
-              <div class="submarine-status active">
+              <button
+                class="submarine-status active"
+                type="button"
+                (click)="
+                  openSubmarinesByStatus(
+                    'ACTIVE',
+                    $event
+                  )
+                "
+              >
                 <span class="status-value">
                   {{ activeSubmarines() }}
                 </span>
-
                 <span class="status-label">
                   Active
                 </span>
-              </div>
+              </button>
 
-              <div class="submarine-status refit">
+              <button
+                class="submarine-status refit"
+                type="button"
+                (click)="
+                  openSubmarinesByStatus(
+                    'REFIT',
+                    $event
+                  )
+                "
+              >
                 <span class="status-value">
                   {{ refitSubmarines() }}
                 </span>
-
                 <span class="status-label">
                   Refit
                 </span>
-              </div>
+              </button>
 
-              <div class="submarine-status damaged">
+              <button
+                class="submarine-status damaged"
+                type="button"
+                (click)="
+                  openSubmarinesByStatus(
+                    'DAMAGED',
+                    $event
+                  )
+                "
+              >
                 <span class="status-value">
                   {{ damagedSubmarines() }}
                 </span>
-
                 <span class="status-label">
                   Damaged
                 </span>
-              </div>
+              </button>
 
-              <div class="submarine-status retired">
+              <button
+                class="submarine-status retired"
+                type="button"
+                (click)="
+                  openSubmarinesByStatus(
+                    'RETIRED',
+                    $event
+                  )
+                "
+              >
                 <span class="status-value">
                   {{ retiredSubmarines() }}
                 </span>
-
                 <span class="status-label">
                   Retired
                 </span>
-              </div>
+              </button>
 
             </div>
 

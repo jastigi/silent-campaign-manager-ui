@@ -1,6 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 
-import { Router } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router,
+} from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 
@@ -43,6 +46,8 @@ export class SubmarineList {
 
   private readonly router = inject(Router);
 
+  private readonly route = inject(ActivatedRoute);
+
   readonly submarines = signal<Submarine[]>([]);
 
   readonly loading = signal(true);
@@ -81,6 +86,18 @@ export class SubmarineList {
   readonly displayedColumns = ['id', 'name', 'type', 'submarineClass', 'nation', 'role', 'status'];
 
   constructor() {
+    const status =
+      this.route.snapshot.queryParamMap.get('status');
+
+    if (
+      status === 'ACTIVE' ||
+      status === 'REFIT' ||
+      status === 'DAMAGED' ||
+      status === 'RETIRED'
+    ) {
+      this.selectedStatus.set(status);
+    }
+
     this.loadSubmarines();
   }
 
