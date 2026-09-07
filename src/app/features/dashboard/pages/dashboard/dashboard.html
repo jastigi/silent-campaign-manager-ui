@@ -148,15 +148,15 @@
       </mat-card>
 
       <mat-card
-        class="metric-card"
+        class="metric-card submarine-card"
         tabindex="0"
         role="button"
         (click)="openSubmarines()"
         (keydown.enter)="openSubmarines()"
       >
-        <mat-card-content>
+        <mat-card-content class="submarine-card-content">
 
-          <div class="metric-header">
+          <div class="submarine-identity">
             <div class="metric-icon">
               <mat-icon>directions_boat</mat-icon>
             </div>
@@ -166,13 +166,64 @@
             </span>
           </div>
 
-          <div class="metric-value">
-            {{ totalSubmarines() }}
-          </div>
+          <div class="submarine-data">
 
-          <div class="metric-action">
-            View fleet
-            <mat-icon>arrow_forward</mat-icon>
+            <div class="submarine-total">
+              <span class="submarine-total-value">
+                {{ totalSubmarines() }}
+              </span>
+
+              <span class="submarine-total-label">
+                Total
+              </span>
+            </div>
+
+            <div class="submarine-divider"></div>
+
+            <div class="submarine-status-grid">
+
+              <div class="submarine-status active">
+                <span class="status-value">
+                  {{ activeSubmarines() }}
+                </span>
+
+                <span class="status-label">
+                  Active
+                </span>
+              </div>
+
+              <div class="submarine-status refit">
+                <span class="status-value">
+                  {{ refitSubmarines() }}
+                </span>
+
+                <span class="status-label">
+                  Refit
+                </span>
+              </div>
+
+              <div class="submarine-status damaged">
+                <span class="status-value">
+                  {{ damagedSubmarines() }}
+                </span>
+
+                <span class="status-label">
+                  Damaged
+                </span>
+              </div>
+
+              <div class="submarine-status retired">
+                <span class="status-value">
+                  {{ retiredSubmarines() }}
+                </span>
+
+                <span class="status-label">
+                  Retired
+                </span>
+              </div>
+
+            </div>
+
           </div>
 
         </mat-card-content>

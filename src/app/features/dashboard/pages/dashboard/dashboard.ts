@@ -43,6 +43,10 @@ export class Dashboard implements OnInit {
   readonly abandonedCampaigns = signal(0);
 
   readonly totalSubmarines = signal(0);
+  readonly activeSubmarines = signal(0);
+  readonly refitSubmarines = signal(0);
+  readonly damagedSubmarines = signal(0);
+  readonly retiredSubmarines = signal(0);
   readonly totalSimulations = signal(0);
 
   readonly recentSimulations =
@@ -126,6 +130,30 @@ export class Dashboard implements OnInit {
 
         this.totalSubmarines.set(
           submarines.length,
+        );
+
+        this.activeSubmarines.set(
+          submarines.filter(
+            (submarine) => submarine.status === 'ACTIVE',
+          ).length,
+        );
+
+        this.refitSubmarines.set(
+          submarines.filter(
+            (submarine) => submarine.status === 'REFIT',
+          ).length,
+        );
+
+        this.damagedSubmarines.set(
+          submarines.filter(
+            (submarine) => submarine.status === 'DAMAGED',
+          ).length,
+        );
+
+        this.retiredSubmarines.set(
+          submarines.filter(
+            (submarine) => submarine.status === 'RETIRED',
+          ).length,
         );
 
         this.totalSimulations.set(

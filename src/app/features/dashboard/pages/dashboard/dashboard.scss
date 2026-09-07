@@ -4,35 +4,6 @@
   gap: 28px;
 }
 
-.page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.page-header h1 {
-  margin: 4px 0 4px;
-
-  font-size: 2rem;
-  line-height: 1.1;
-}
-
-.page-header p {
-  margin: 0;
-
-  color: #64748b;
-}
-
-.eyebrow {
-  color: #64748b;
-
-  font-size: 0.75rem;
-  font-weight: 700;
-
-  letter-spacing: 0.06em;
-}
-
 .metrics-grid {
   display: grid;
 
@@ -93,45 +64,10 @@
   font-size: 28px;
 }
 
-.submarines .metric-icon {
-  background: #ecfdf5;
-
-  color: #15803d;
-}
-
 .simulations .metric-icon {
   background: #fff7ed;
 
   color: #c2410c;
-}
-
-.metric-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.metric-content > span {
-  color: #64748b;
-
-  font-size: 0.78rem;
-  font-weight: 700;
-
-  letter-spacing: 0.04em;
-
-  text-transform: uppercase;
-}
-
-.metric-content strong {
-  margin-top: 3px;
-
-  font-size: 2rem;
-  line-height: 1.1;
-}
-
-.metric-content small {
-  margin-top: 7px;
-
-  color: #64748b;
 }
 
 .recent-section {
@@ -393,7 +329,6 @@
 
 @media (max-width: 600px) {
 
-  .page-header,
   .section-header {
     align-items: stretch;
     flex-direction: column;
@@ -409,10 +344,12 @@
 
 }
 
-/* Campaign status overview */
+/* Campaign and submarine status overview */
 
-.campaign-card {
-  .campaign-card-content {
+.campaign-card,
+.submarine-card {
+  .campaign-card-content,
+  .submarine-card-content {
     display: grid;
     grid-template-columns: 72px minmax(0, 1fr);
     gap: 1rem;
@@ -420,30 +357,35 @@
     height: 100%;
   }
 
-  .campaign-identity {
+  .campaign-identity,
+  .submarine-identity {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 0.45rem;
   }
 
-  .campaign-data {
+  .campaign-data,
+  .submarine-data {
     min-width: 0;
   }
 
-  .campaign-total {
+  .campaign-total,
+  .submarine-total {
     display: flex;
     align-items: baseline;
     gap: 0.6rem;
   }
 
-  .campaign-total-value {
+  .campaign-total-value,
+  .submarine-total-value {
     font-size: 2.5rem;
     font-weight: 700;
     line-height: 1;
   }
 
-  .campaign-total-label {
+  .campaign-total-label,
+  .submarine-total-label {
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -451,13 +393,51 @@
     color: var(--mat-sys-on-surface-variant);
   }
 
-  .campaign-divider {
+  .campaign-divider,
+  .submarine-divider {
     width: 100%;
     height: 1px;
     margin: 0.7rem 0 0.55rem;
     background: var(--mat-sys-outline-variant);
   }
 
+  .status-value,
+  .status-label {
+    display: block;
+  }
+
+  .status-value {
+    margin-bottom: 0.15rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .status-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .active {
+    .status-value,
+    .status-label {
+      color: #1976d2;
+    }
+  }
+
+  .abandoned,
+  .damaged {
+    .status-value,
+    .status-label {
+      color: #c62828;
+    }
+  }
+}
+
+.campaign-card {
   .campaign-status-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -468,9 +448,7 @@
     appearance: none;
     font: inherit;
     background: transparent;
-    border-top: 0;
-    border-bottom: 0;
-    border-left: 0;
+    border: 0;
     cursor: pointer;
     min-width: 0;
     padding: 0 0.4rem;
@@ -499,57 +477,63 @@
     }
   }
 
-  .status-value,
-  .status-label {
-    display: block;
-  }
-
-  .status-value {
-    margin-bottom: 0.15rem;
-    font-size: 1.1rem;
-    font-weight: 700;
-    line-height: 1.1;
-  }
-
-  .status-label {
-    font-size: 0.62rem;
-    font-weight: 700;
-    line-height: 1.2;
-    text-transform: uppercase;
-    letter-spacing: 0;
-    white-space: nowrap;
-  }
-
-  .campaign-status.active {
-    .status-value,
-    .status-label {
-      color: #1976d2;
-    }
-  }
-
-  .campaign-status.finished {
+  .finished {
     .status-value,
     .status-label {
       color: #2e7d32;
     }
   }
+}
 
-  .campaign-status.abandoned {
+.submarine-card {
+  .submarine-status-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 0.55rem;
+    width: 100%;
+  }
+
+  .submarine-status {
+    min-width: 0;
+    padding: 0 0.4rem;
+    text-align: center;
+
+    &:nth-child(odd) {
+      padding-left: 0;
+      border-right: 1px solid var(--mat-sys-outline-variant);
+    }
+
+    &:nth-child(even) {
+      padding-right: 0;
+    }
+  }
+
+  .refit {
     .status-value,
     .status-label {
-      color: #c62828;
+      color: #ed6c02;
+    }
+  }
+
+  .retired {
+    .status-value,
+    .status-label {
+      color: var(--mat-sys-on-surface-variant);
     }
   }
 }
 
 @media (max-width: 900px) {
-  .campaign-card {
-    .campaign-card-content {
+  .campaign-card,
+  .submarine-card {
+    .campaign-card-content,
+    .submarine-card-content {
       grid-template-columns: 64px minmax(0, 1fr);
       gap: 0.75rem;
     }
 
-    .campaign-status {
+    .campaign-status,
+    .submarine-status {
       padding: 0 0.25rem;
     }
 
