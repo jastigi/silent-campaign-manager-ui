@@ -322,4 +322,21 @@ describe('Dashboard', () => {
       { duration: 5000 },
     );
   }, 30000);
+
+  it('should return the correct mission outcome class', () => {
+    const fixture = TestBed.createComponent(Dashboard);
+    const component = fixture.componentInstance;
+
+    expect(component.outcomeClass('SUCCESS')).toBe(
+      'outcome-success',
+    );
+
+    expect(component.outcomeClass('PARTIAL_SUCCESS')).toBe(
+      'outcome-partial_success',
+    );
+
+    expect(component.outcomeClass('FAILURE')).toBe(
+      'outcome-failure',
+    );
+  }, 30000);
 });
