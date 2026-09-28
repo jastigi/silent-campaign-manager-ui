@@ -268,4 +268,33 @@ describe('Dashboard', () => {
       },
     );
   }, 30000);
+
+  it('should open the patrol for a recent simulation', () => {
+    patrolServiceMock.getPatrol.mockReturnValue(
+      of({
+        id: 10,
+        campaignId: 3,
+      }),
+    );
+
+    const fixture = TestBed.createComponent(Dashboard);
+    const component = fixture.componentInstance;
+
+    component.ngOnInit();
+
+    const simulation = component.recentSimulations()[0];
+
+    component.openSimulationPatrol(simulation);
+
+    expect(patrolServiceMock.getPatrol).toHaveBeenCalledWith(10);
+
+    expect(routerMock.navigate).toHaveBeenCalledWith([
+      '/campaigns',
+      3,
+      'patrols',
+      10,
+    ]);
+
+    expect(snackBarMock.open).not.toHaveBeenCalled();
+  }, 30000);
 });
