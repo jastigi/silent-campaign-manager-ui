@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { Dashboard } from './dashboard';
 
@@ -194,5 +194,26 @@ describe('Dashboard', () => {
 
     expect(component.loading()).toBe(false);
     expect(component.loadError()).toBe(false);
+  }, 30000);
+
+  it('should report an error when dashboard data fails to load', () => {
+    campaignServiceMock.getCampaigns.mockReturnValue(
+      throwError(() => new Error('Unable to load campaigns')),
+    );
+
+    const fixture = TestBed.createComponent(Dashboard);
+    const component = fixture.componentInstance;
+
+    component.ngOnInit();
+
+    expect(campaignServiceMock.getCampaigns).toHaveBeenCalledWith(
+      0,
+      1,
+      'id',
+      'asc',
+    );
+
+    expect(component.loading()).toBe(false);
+    expect(component.loadError()).toBe(true);
   }, 30000);
 });
