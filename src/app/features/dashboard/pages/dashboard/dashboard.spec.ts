@@ -242,4 +242,30 @@ describe('Dashboard', () => {
       },
     );
   }, 30000);
+
+  it('should navigate to submarines filtered by status', () => {
+    const stopPropagation = vi.fn();
+
+    const event = {
+      stopPropagation,
+    } as unknown as Event;
+
+    const fixture = TestBed.createComponent(Dashboard);
+    const component = fixture.componentInstance;
+
+    component.ngOnInit();
+
+    component.openSubmarinesByStatus('REFIT', event);
+
+    expect(stopPropagation).toHaveBeenCalled();
+
+    expect(routerMock.navigate).toHaveBeenCalledWith(
+      ['/submarines'],
+      {
+        queryParams: {
+          status: 'REFIT',
+        },
+      },
+    );
+  }, 30000);
 });
