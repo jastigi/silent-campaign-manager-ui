@@ -297,4 +297,29 @@ describe('Dashboard', () => {
 
     expect(snackBarMock.open).not.toHaveBeenCalled();
   }, 30000);
+
+  it('should show an error when patrol cannot be opened', () => {
+    patrolServiceMock.getPatrol.mockReturnValue(
+      throwError(() => new Error('Unable to load patrol')),
+    );
+
+    const fixture = TestBed.createComponent(Dashboard);
+    const component = fixture.componentInstance;
+
+    component.ngOnInit();
+
+    const simulation = component.recentSimulations()[0];
+
+    component.openSimulationPatrol(simulation);
+
+    expect(patrolServiceMock.getPatrol).toHaveBeenCalledWith(10);
+
+    expect(routerMock.navigate).not.toHaveBeenCalled();
+
+    expect(snackBarMock.open).toHaveBeenCalledWith(
+      'Unable to open patrol.',
+      'Close',
+      { duration: 5000 },
+    );
+  }, 30000);
 });
