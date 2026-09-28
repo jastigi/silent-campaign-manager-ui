@@ -269,4 +269,28 @@ describe('SubmarineDetail', () => {
 
     confirmSpy.mockRestore();
   }, 30000);
+
+  it('should not delete when no submarine is loaded', () => {
+    activatedRouteMock.snapshot.paramMap.get.mockReturnValue('invalid');
+
+    const confirmSpy = vi
+      .spyOn(window, 'confirm')
+      .mockReturnValue(false);
+
+    const fixture = TestBed.createComponent(SubmarineDetail);
+    const component = fixture.componentInstance;
+
+    expect(component.submarine()).toBeNull();
+    expect(component.loadError()).toBe(true);
+
+    component.delete();
+
+    expect(confirmSpy).not.toHaveBeenCalled();
+    expect(submarineServiceMock.deleteSubmarine).not.toHaveBeenCalled();
+    expect(snackBarMock.open).not.toHaveBeenCalled();
+    expect(routerMock.navigate).not.toHaveBeenCalled();
+    expect(component.deleting()).toBe(false);
+
+    confirmSpy.mockRestore();
+  }, 30000);
 });
