@@ -216,4 +216,30 @@ describe('Dashboard', () => {
     expect(component.loading()).toBe(false);
     expect(component.loadError()).toBe(true);
   }, 30000);
+
+  it('should navigate to active campaigns', () => {
+    const stopPropagation = vi.fn();
+
+    const event = {
+      stopPropagation,
+    } as unknown as Event;
+
+    const fixture = TestBed.createComponent(Dashboard);
+    const component = fixture.componentInstance;
+
+    component.ngOnInit();
+
+    component.openCampaignsByStatus('ACTIVE', event);
+
+    expect(stopPropagation).toHaveBeenCalled();
+
+    expect(routerMock.navigate).toHaveBeenCalledWith(
+      ['/campaigns'],
+      {
+        queryParams: {
+          status: 'ACTIVE',
+        },
+      },
+    );
+  }, 30000);
 });
