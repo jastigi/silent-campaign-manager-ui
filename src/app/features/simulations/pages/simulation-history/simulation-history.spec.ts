@@ -134,4 +134,40 @@ describe('SimulationHistory', () => {
     expect(component.loading()).toBe(false);
     expect(component.loadError()).toBe(true);
   }, 30000);
+
+  it('should load simulation history filtered by patrol', () => {
+    simulationHistoryServiceMock.getHistoryByPatrol.mockReturnValue(
+      of({
+        content: [simulation],
+        totalElements: 1,
+        totalPages: 1,
+        size: 10,
+        number: 0,
+        first: true,
+        last: true,
+        numberOfElements: 1,
+        empty: false,
+      }),
+    );
+
+    const fixture = TestBed.createComponent(SimulationHistory);
+    const component = fixture.componentInstance;
+
+    vi.clearAllMocks();
+
+    component.patrolFilter.set('10');
+
+    component.applyPatrolFilter();
+
+    expect(
+      simulationHistoryServiceMock.getHistoryByPatrol,
+    ).toHaveBeenCalledWith(10, 0, 10);
+
+    expect(simulationHistoryServiceMock.getHistory).not.toHaveBeenCalled();
+
+    expect(component.simulations()).toEqual([simulation]);
+    expect(component.totalElements()).toBe(1);
+    expect(component.loading()).toBe(false);
+    expect(component.loadError()).toBe(false);
+  }, 30000);
 });
