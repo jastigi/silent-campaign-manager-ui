@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Observable } from 'rxjs';
 
 import { Dashboard } from './dashboard';
 
@@ -9,6 +9,7 @@ import { CampaignService } from '../../../campaigns/data-access/campaign.service
 import { SubmarineService } from '../../../submarines/data-access/submarine.service';
 import { SimulationHistoryService } from '../../../simulations/data-access/simulation-history.service';
 import { PatrolService } from '../../../patrols/data-access/patrol.service';
+import { Patrol } from '../../../patrols/models/patrol.model';
 
 describe('Dashboard', () => {
   const campaignServiceMock = {
@@ -387,5 +388,106 @@ describe('Dashboard', () => {
 
     expect(component.loading()).toBe(false);
     expect(component.loadError()).toBe(false);
+  }, 30000);
+
+  it('should navigate to campaigns, submarines and simulations lists', () => {
+    const fixture = TestBed.createComponent(Dashboard);
+    const component = fixture.componentInstance;
+
+    component.openCampaigns();
+
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/campaigns']);
+
+    component.openSubmarines();
+
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/submarines']);
+
+    component.openSimulations();
+
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/simulations']);
+
+    expect(routerMock.navigate).toHaveBeenCalledTimes(3);
+  }, 30000);
+
+  it('should reset the opening patrol flag once the patrol resolves', () => {
+    patrolServiceMock.getPatrol.mockReturnValue(
+      of({
+        id: 10,
+        campaignId: 3,
+      }),
+    );
+
+    const fixture = TestBed.createComponent(Dashboard);
+    const component = fixture.componentInstance;
+
+    component.ngOnInit();
+
+    expect(component.openingPatrol()).toBeNull();
+
+    const simulation = component.recentSimulations()[0];
+
+    component.openSimulationPatrol(simulation);
+
+    expect(component.openingPatrol()).toBeNull();
+
+    expect(patrolServiceMock.getPatrol).toHaveBeenCalledWith(10);
+  }, 30000);
+
+  it('should reset the opening patrol flag when the patrol fails', () => {
+    patrolServiceMock.getPatrol.mockReturnValue(
+      throwError(() => new Error('Unable to load patrol')),
+    );
+
+    const fixture = TestBed.createComponent(Dashboard);
+    const component = fixture.componentInstance;
+
+    component.ngOnInit();
+
+    const simulation = component.recentSimulations()[0];
+
+    component.openSimulationPatrol(simulation);
+
+    expect(component.openingPatrol()).toBeNull();
+
+    expect(routerMock.navigate).not.toHaveBeenCalled();
+  }, 30000);
+
+  it('should ignore a second patrol request while one is pending', () => {
+    // No emitimos nada: el flag sigue activo hasta la primera emision.
+    patrolServiceMock.getPatrol.mockReturnValue(
+      new Observable<Patrol>(() => {}),
+    );
+
+    const fixture = TestBed.createComponent(Dashboard);
+    const component = fixture.componentInstance;
+
+    component.ngOnInit();
+
+    const simulation = component.recentSimulations()[0];
+
+    component.openSimulationPatrol(simulation);
+
+    expect(component.openingPatrol()).toBe(10);
+
+    component.openSimulationPatrol(simulation);
+
+    expect(patrolServiceMock.getPatrol).toHaveBeenCalledTimes(1);
+  }, 30000);
+
+  it('should return the correct final state class', () => {
+    const fixture = TestBed.createComponent(Dashboard);
+    const component = fixture.componentInstance;
+
+    expect(component.finalStateClass('COMPLETED')).toBe(
+      'state-completed',
+    );
+
+    expect(component.finalStateClass('PENDING')).toBe(
+      'state-pending',
+    );
+
+    expect(component.finalStateClass('ABANDONED')).toBe(
+      'state-abandoned',
+    );
   }, 30000);
 });
