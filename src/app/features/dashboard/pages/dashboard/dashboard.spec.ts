@@ -339,4 +339,53 @@ describe('Dashboard', () => {
       'outcome-failure',
     );
   }, 30000);
+
+  it('should recover from a load error when dashboard is refreshed', () => {
+    campaignServiceMock.getCampaigns.mockReturnValueOnce(
+      throwError(() => new Error('Unable to load campaigns')),
+    );
+
+    const fixture = TestBed.createComponent(Dashboard);
+    const component = fixture.componentInstance;
+
+    component.ngOnInit();
+
+    expect(component.loading()).toBe(false);
+    expect(component.loadError()).toBe(true);
+
+    campaignServiceMock.getCampaigns.mockReturnValue(
+      of({
+        content: [],
+        totalElements: 6,
+        totalPages: 6,
+        size: 1,
+        number: 0,
+        first: true,
+        last: false,
+        numberOfElements: 1,
+        empty: false,
+      }),
+    );
+
+    vi.clearAllMocks();
+
+    component.refresh();
+
+    expect(campaignServiceMock.getCampaigns).toHaveBeenCalledWith(
+      0,
+      1,
+      'id',
+      'asc',
+    );
+
+    expect(campaignServiceMock.getCampaignsByStatus).toHaveBeenCalledTimes(3);
+    expect(submarineServiceMock.getSubmarines).toHaveBeenCalledTimes(1);
+    expect(simulationHistoryServiceMock.getHistory).toHaveBeenCalledWith(
+      0,
+      5,
+    );
+
+    expect(component.loading()).toBe(false);
+    expect(component.loadError()).toBe(false);
+  }, 30000);
 });
