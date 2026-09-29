@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { SimulationHistory } from './simulation-history';
 import { SimulationHistoryService } from '../../data-access/simulation-history.service';
@@ -109,5 +109,29 @@ describe('SimulationHistory', () => {
 
     expect(component.loading()).toBe(false);
     expect(component.loadError()).toBe(false);
+  }, 30000);
+
+  it('should report an error when simulation history fails to load', () => {
+    simulationHistoryServiceMock.getHistory.mockReturnValue(
+      throwError(() => new Error('Unable to load simulation history')),
+    );
+
+    const fixture = TestBed.createComponent(SimulationHistory);
+    const component = fixture.componentInstance;
+
+    expect(simulationHistoryServiceMock.getHistory).toHaveBeenCalledWith(
+      0,
+      10,
+    );
+
+    expect(
+      simulationHistoryServiceMock.getHistoryByPatrol,
+    ).not.toHaveBeenCalled();
+
+    expect(component.simulations()).toEqual([]);
+    expect(component.totalElements()).toBe(0);
+
+    expect(component.loading()).toBe(false);
+    expect(component.loadError()).toBe(true);
   }, 30000);
 });
