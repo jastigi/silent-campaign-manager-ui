@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { of, throwError, Observable } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
 import { Dashboard } from './dashboard';
 
@@ -452,11 +452,10 @@ describe('Dashboard', () => {
     expect(routerMock.navigate).not.toHaveBeenCalled();
   }, 30000);
 
-  it('should ignore a second patrol request while one is pending', () => {
-    // No emitimos nada: el flag sigue activo hasta la primera emision.
-    patrolServiceMock.getPatrol.mockReturnValue(
-      new Observable<Patrol>(() => {}),
-    );
+  it('should prevent opening another patrol while one is already loading', () => {
+    const patrolRequest$ = new Subject<Patrol>();
+
+    patrolServiceMock.getPatrol.mockReturnValue(patrolRequest$);
 
     const fixture = TestBed.createComponent(Dashboard);
     const component = fixture.componentInstance;
@@ -466,12 +465,33 @@ describe('Dashboard', () => {
     const simulation = component.recentSimulations()[0];
 
     component.openSimulationPatrol(simulation);
-
-    expect(component.openingPatrol()).toBe(10);
-
     component.openSimulationPatrol(simulation);
 
     expect(patrolServiceMock.getPatrol).toHaveBeenCalledTimes(1);
+    expect(component.openingPatrol()).toBe(simulation.patrolId);
+
+    patrolRequest$.next({
+      id: simulation.patrolId,
+      patrolName: 'North Atlantic Patrol',
+      patrolDate: '2026-09-20',
+      area: null,
+      result: 'SUCCESS',
+      campaignId: 3,
+      submarineId: 1,
+      submarineName: 'USS Ohio',
+      missionType: 'DETERRENCE_PATROL',
+      detectedContacts: 3,
+    });
+    patrolRequest$.complete();
+
+    expect(component.openingPatrol()).toBeNull();
+
+    expect(routerMock.navigate).toHaveBeenCalledWith([
+      '/campaigns',
+      3,
+      'patrols',
+      simulation.patrolId,
+    ]);
   }, 30000);
 
   it('should return the correct final state class', () => {
