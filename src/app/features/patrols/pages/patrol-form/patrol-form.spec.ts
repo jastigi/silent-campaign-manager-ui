@@ -835,4 +835,124 @@ describe('PatrolForm', () => {
     );
     expect(component.formatValue('ATTACK')).toBe('ATTACK');
   }, 30000);
+
+  it('should prevent editing a closed patrol and redirect to its detail', () => {
+    activatedRouteMock.snapshot.paramMap.get.mockImplementation(
+      (param: string) => {
+        if (param === 'campaignId') {
+          return '1';
+        }
+
+        if (param === 'patrolId') {
+          return '10';
+        }
+
+        return null;
+      },
+    );
+
+    submarineServiceMock.getSubmarines.mockReturnValue(of([]));
+
+    const closedPatrol: Patrol = {
+      ...patrol,
+      result: 'SUCCESS',
+    };
+
+    patrolServiceMock.getPatrol.mockReturnValue(of(closedPatrol));
+
+    const editFixture = TestBed.createComponent(PatrolForm);
+    const editComponent = editFixture.componentInstance;
+
+    expect(patrolServiceMock.getPatrol).toHaveBeenCalledWith(10);
+
+    expect(editComponent.loadError()).toBe(false);
+
+    expect(editComponent.form.get('patrolName')?.value).toBe('');
+
+    expect(snackBarMock.open).toHaveBeenCalledWith(
+      'Closed patrols cannot be edited.',
+      'Close',
+      {
+        duration: 5000,
+      },
+    );
+
+    expect(routerMock.navigate).toHaveBeenCalledWith([
+      '/campaigns',
+      1,
+      'patrols',
+      10,
+    ]);
+
+    expect(editComponent.loading()).toBe(false);
+  }, 30000);
+
+  it('should reject a patrol that belongs to a different campaign', () => {
+    activatedRouteMock.snapshot.paramMap.get.mockImplementation(
+      (param: string) => {
+        if (param === 'campaignId') {
+          return '1';
+        }
+
+        if (param === 'patrolId') {
+          return '10';
+        }
+
+        return null;
+      },
+    );
+
+    submarineServiceMock.getSubmarines.mockReturnValue(of([]));
+
+    const patrolFromAnotherCampaign: Patrol = {
+      ...patrol,
+      campaignId: 2,
+      result: null,
+    };
+
+    patrolServiceMock.getPatrol.mockReturnValue(of(patrolFromAnotherCampaign));
+
+    const editFixture = TestBed.createComponent(PatrolForm);
+    const editComponent = editFixture.componentInstance;
+
+    expect(patrolServiceMock.getPatrol).toHaveBeenCalledWith(10);
+
+    expect(editComponent.loading()).toBe(false);
+    expect(editComponent.loadError()).toBe(true);
+
+    expect(editComponent.form.controls.patrolName.value).toBe('');
+
+    expect(snackBarMock.open).not.toHaveBeenCalled();
+    expect(routerMock.navigate).not.toHaveBeenCalled();
+  }, 30000);
+
+  it('should reject a non-numeric patrol id without loading data', () => {
+    activatedRouteMock.snapshot.paramMap.get.mockImplementation(
+      (param: string) => {
+        if (param === 'campaignId') {
+          return '1';
+        }
+
+        if (param === 'patrolId') {
+          return 'abc';
+        }
+
+        return null;
+      },
+    );
+
+    const invalidPatrolFixture = TestBed.createComponent(PatrolForm);
+    const invalidPatrolComponent = invalidPatrolFixture.componentInstance;
+
+    expect(invalidPatrolComponent.editing()).toBe(false);
+    expect(invalidPatrolComponent.loadError()).toBe(true);
+
+    expect(patrolServiceMock.getPatrol).not.toHaveBeenCalled();
+    expect(submarineServiceMock.getSubmarines).not.toHaveBeenCalled();
+
+    expect(invalidPatrolComponent.form.controls.patrolName.value).toBe('');
+
+    expect(snackBarMock.open).not.toHaveBeenCalled();
+    expect(routerMock.navigate).not.toHaveBeenCalled();
+  }, 30000);
 });
