@@ -314,4 +314,225 @@ expect(
       component.loadError(),
     ).toBe(true);
   }, 30000);
+
+  it('should load the requested page from the backend when showing all campaigns', () => {
+    const fixture =
+      TestBed.createComponent(CampaignList);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      campaignServiceMock.getCampaigns,
+    ).toHaveBeenCalledTimes(1);
+
+    component.onPageChange({
+      pageIndex: 2,
+      pageSize: 25,
+      length: 100,
+    });
+
+    expect(
+      component.pageIndex(),
+    ).toBe(2);
+
+    expect(
+      component.pageSize(),
+    ).toBe(25);
+
+    expect(
+      campaignServiceMock.getCampaigns,
+    ).toHaveBeenCalledTimes(2);
+
+    expect(
+      campaignServiceMock.getCampaigns,
+    ).toHaveBeenLastCalledWith(
+      2,
+      25,
+      'id',
+      'asc',
+    );
+
+    expect(
+      campaignServiceMock.getCampaignsByStatus,
+    ).not.toHaveBeenCalled();
+  }, 30000);
+
+  it('should refresh the current filtered page without resetting its state', () => {
+    const filteredCampaigns: Campaign[] = Array.from(
+      { length: 15 },
+      (_, index) => ({
+        ...campaigns[0],
+        id: index + 1,
+        status: 'FINISHED' as const,
+      }),
+    );
+
+    campaignServiceMock.getCampaignsByStatus.mockReturnValue(
+      of(filteredCampaigns),
+    );
+
+    const fixture =
+      TestBed.createComponent(CampaignList);
+
+    const component =
+      fixture.componentInstance;
+
+    component.onStatusChange('FINISHED');
+
+    component.onPageChange({
+      pageIndex: 1,
+      pageSize: 10,
+      length: 15,
+    });
+
+    expect(
+      component.selectedStatus(),
+    ).toBe('FINISHED');
+
+    expect(
+      component.pageIndex(),
+    ).toBe(1);
+
+    expect(
+      component.pageSize(),
+    ).toBe(10);
+
+    expect(
+      component.campaigns(),
+    ).toEqual(filteredCampaigns.slice(10, 15));
+
+    campaignServiceMock.getCampaignsByStatus.mockClear();
+
+    // The constructor loads with ALL before the filter is applied.
+    campaignServiceMock.getCampaigns.mockClear();
+
+    component.refresh();
+
+    expect(
+      component.selectedStatus(),
+    ).toBe('FINISHED');
+
+    expect(
+      component.pageIndex(),
+    ).toBe(1);
+
+    expect(
+      component.pageSize(),
+    ).toBe(10);
+
+    expect(
+      campaignServiceMock.getCampaignsByStatus,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      campaignServiceMock.getCampaignsByStatus,
+    ).toHaveBeenCalledWith('FINISHED');
+
+    expect(
+      campaignServiceMock.getCampaigns,
+    ).not.toHaveBeenCalled();
+
+    expect(
+      component.campaigns(),
+    ).toEqual(filteredCampaigns.slice(10, 15));
+  }, 30000);
+
+  it('should navigate to the campaign creation page', () => {
+    const fixture =
+      TestBed.createComponent(CampaignList);
+
+    const component =
+      fixture.componentInstance;
+
+    component.createCampaign();
+
+    expect(
+      routerMock.navigate,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      routerMock.navigate,
+    ).toHaveBeenCalledWith(['/campaigns/new']);
+  }, 30000);
+
+  it('should navigate to the selected campaign detail page', () => {
+    const fixture =
+      TestBed.createComponent(CampaignList);
+
+    const component =
+      fixture.componentInstance;
+
+    component.openCampaign(campaigns[0]);
+
+    expect(
+      routerMock.navigate,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      routerMock.navigate,
+    ).toHaveBeenCalledWith([
+      '/campaigns',
+      campaigns[0].id,
+    ]);
+  }, 30000);
+
+  it('should return the corresponding CSS class for each campaign status', () => {
+    const fixture =
+      TestBed.createComponent(CampaignList);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.statusClass('ACTIVE'),
+    ).toBe('status-active');
+
+    expect(
+      component.statusClass('FINISHED'),
+    ).toBe('status-finished');
+
+    expect(
+      component.statusClass('ABANDONED'),
+    ).toBe('status-abandoned');
+  }, 30000);
+
+  it('should fall back to loading all campaigns when the status query param is invalid', () => {
+    activatedRouteMock.snapshot.queryParamMap.get.mockReturnValue('PENDING');
+
+    const fixture =
+      TestBed.createComponent(CampaignList);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.selectedStatus(),
+    ).toBe('ALL');
+
+    expect(
+      campaignServiceMock.getCampaigns,
+    ).toHaveBeenCalledWith(
+      0,
+      10,
+      'id',
+      'asc',
+    );
+
+    expect(
+      campaignServiceMock.getCampaignsByStatus,
+    ).not.toHaveBeenCalled();
+
+    expect(
+      component.campaigns(),
+    ).toEqual(campaigns);
+
+    expect(
+      component.loading(),
+    ).toBe(false);
+
+    expect(
+      component.loadError(),
+    ).toBe(false);
+  }, 30000);
 });
