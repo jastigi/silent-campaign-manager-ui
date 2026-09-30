@@ -10,7 +10,7 @@
 
 - Comando: `npm test` (Angular + Vitest). No hay scripts de `lint` ni de comprobación de tipos; la validación de tipos ocurre al compilar, dentro de `ng test` y de `ng build`.
 - Cada método público de un componente lleva su propio `it(...)`.
-- Un fallo de compilación de TypeScript (por ejemplo, llamar a un método `private` osaltar argumentos) detiene la ejecución de los tests: el build falla antes de correr nada. Si un test no compila, no llegó a ejecutarse.
+- Un fallo de compilación de TypeScript (por ejemplo, llamar a un método `private` o saltar argumentos) detiene la ejecución de los tests: el build falla antes de correr nada. Si un test no compila, no llegó a ejecutarse.
 
 ## Verificar antes de dar por buena una expectativa
 
@@ -19,3 +19,4 @@
 - Un mock no tipado acepta objetos mínimos, pero uno tipado exige todos los campos de la interfaz. Si el objeto del fixture debe ser completo, el error de tipo salta al compilar.
 - Las llamadas que dispara el constructor no se pueden invocar a mano: `TestBed.createComponent()` ya las ejecuta. Los componentes con `ngOnInit()` sí necesitan invocarlo explícitamente, porque los hooks no corren hasta `detectChanges()`.
 - `vi.clearAllMocks()` limpia el historial de llamadas y **conserva** las implementaciones. Sirve para descartar llamadas de una carga automática y así demostrar solo lo que hizo una acción concreta. `vi.resetAllMocks()` borraría también las implementaciones.
+- Sin `TestBed.overrideComponent({ remove: { imports: [MatSnackBarModule] } })`, un componente standalone recibe la `MatSnackBar` real aunque el registro exista en `providers`, y sus aserciones pasan sin comprobar nada. Aplícalo siempre a componentes con `MatSnackBarModule` en sus `imports`.
