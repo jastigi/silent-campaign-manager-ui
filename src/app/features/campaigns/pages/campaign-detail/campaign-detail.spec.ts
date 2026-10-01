@@ -664,4 +664,195 @@ describe('CampaignDetail', () => {
 
     confirmSpy.mockRestore();
   }, 30000);
+
+  it('should navigate back to the campaign list', () => {
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    routerMock.navigate.mockClear();
+
+    component.back();
+
+    expect(
+      routerMock.navigate,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      routerMock.navigate,
+    ).toHaveBeenCalledWith([
+      '/campaigns',
+    ]);
+  }, 30000);
+
+  it('should navigate to the selected patrol detail page', () => {
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    const campaign = component.campaign();
+
+    expect(campaign).not.toBeNull();
+
+    routerMock.navigate.mockClear();
+
+    component.openPatrol(7);
+
+    expect(
+      routerMock.navigate,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      routerMock.navigate,
+    ).toHaveBeenCalledWith([
+      '/campaigns',
+      campaign!.id,
+      'patrols',
+      7,
+    ]);
+  }, 30000);
+
+  it('should not navigate to a patrol when the campaign failed to load', () => {
+    campaignServiceMock.getCampaignDetails.mockReturnValue(
+      throwError(() => new Error('Failed to load campaign')),
+    );
+
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.campaign(),
+    ).toBeNull();
+
+    expect(
+      component.loadError(),
+    ).toBe(true);
+
+    routerMock.navigate.mockClear();
+
+    component.openPatrol(7);
+
+    expect(
+      routerMock.navigate,
+    ).not.toHaveBeenCalled();
+  }, 30000);
+
+  it('should return the corresponding CSS class for each patrol result', () => {
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.resultClass('SUCCESS'),
+    ).toBe('result-success');
+
+    expect(
+      component.resultClass('PARTIAL_SUCCESS'),
+    ).toBe('result-partial-success');
+
+    expect(
+      component.resultClass('FAILURE'),
+    ).toBe('result-failure');
+
+    expect(
+      component.resultClass(null),
+    ).toBe('result-pending');
+  }, 30000);
+
+  it('should return the corresponding CSS class for each campaign status', () => {
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.statusClass('ACTIVE'),
+    ).toBe('status-active');
+
+    expect(
+      component.statusClass('FINISHED'),
+    ).toBe('status-finished');
+
+    expect(
+      component.statusClass('ABANDONED'),
+    ).toBe('status-abandoned');
+  }, 30000);
+
+  it('should return the corresponding CSS class for each timeline event type', () => {
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.timelineClass('CAMPAIGN_EXECUTION_STARTED'),
+    ).toBe('timeline-blue');
+
+    expect(
+      component.timelineClass('CAMPAIGN_EXECUTION_COMPLETED'),
+    ).toBe('timeline-green');
+
+    expect(
+      component.timelineClass('CAMPAIGN_EXECUTION_FAILED'),
+    ).toBe('timeline-red');
+
+    expect(
+      component.timelineClass('PATROL_COMPLETED'),
+    ).toBe('timeline-amber');
+  }, 30000);
+
+  it('should return the corresponding CSS class for each execution status', () => {
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.executionStatusClass('RUNNING'),
+    ).toBe('execution-running');
+
+    expect(
+      component.executionStatusClass('COMPLETED'),
+    ).toBe('execution-completed');
+
+    expect(
+      component.executionStatusClass('FAILED'),
+    ).toBe('execution-failed');
+  }, 30000);
+
+  it('should return the corresponding CSS class for each mission outcome', () => {
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.missionOutcomeClass('SUCCESS'),
+    ).toBe('mission-outcome-success');
+
+    expect(
+      component.missionOutcomeClass('PARTIAL_SUCCESS'),
+    ).toBe('mission-outcome-partial');
+
+    expect(
+      component.missionOutcomeClass('FAILURE'),
+    ).toBe('mission-outcome-failure');
+
+    expect(
+      component.missionOutcomeClass(null),
+    ).toBe('mission-outcome-neutral');
+  }, 30000);
 });
