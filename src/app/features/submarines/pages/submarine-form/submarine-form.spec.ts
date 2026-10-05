@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
 import { SubmarineForm } from './submarine-form';
 import { SubmarineService } from '../../data-access/submarine.service';
@@ -508,5 +508,59 @@ describe('SubmarineForm', () => {
     );
 
     expect(routerMock.navigate).not.toHaveBeenCalled();
+  }, 30000);
+
+  it('should prevent a second save while a save request is in progress', () => {
+    const saveSubject = new Subject<{
+      id: number;
+      name: string;
+      type: string;
+      submarineClass: string;
+      nation: string;
+      status: string;
+      submarineRole: string;
+    }>();
+
+    submarineServiceMock.createSubmarine.mockReturnValue(
+      saveSubject.asObservable(),
+    );
+
+    const fixture = TestBed.createComponent(SubmarineForm);
+    const component = fixture.componentInstance;
+
+    component.form.setValue({
+      name: '  USS Ohio  ',
+      type: 'SSBN',
+      submarineClass: 'OHIO',
+      nation: '  USA  ',
+      status: 'ACTIVE',
+      submarineRole: 'SSBN',
+    });
+
+    submarineServiceMock.createSubmarine.mockClear();
+
+    component.save();
+
+    expect(component.saving()).toBe(true);
+    expect(submarineServiceMock.createSubmarine).toHaveBeenCalledTimes(1);
+
+    component.save();
+
+    expect(submarineServiceMock.createSubmarine).toHaveBeenCalledTimes(1);
+    expect(component.saving()).toBe(true);
+
+    saveSubject.next({
+      id: 7,
+      name: 'USS Ohio',
+      type: 'SSBN',
+      submarineClass: 'OHIO',
+      nation: 'USA',
+      status: 'ACTIVE',
+      submarineRole: 'SSBN',
+    });
+    saveSubject.complete();
+
+    expect(component.saving()).toBe(false);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/submarines', 7]);
   }, 30000);
 });

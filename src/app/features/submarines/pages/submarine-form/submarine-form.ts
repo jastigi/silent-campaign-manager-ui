@@ -170,6 +170,10 @@ export class SubmarineForm {
       return;
     }
 
+    if (this.saving()) {
+      return;
+    }
+
     const value = this.form.getRawValue();
 
     if (!value.type || !value.submarineClass || !value.status || !value.submarineRole) {
