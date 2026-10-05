@@ -465,4 +465,48 @@ describe('SubmarineForm', () => {
     expect(submarineServiceMock.createSubmarine).not.toHaveBeenCalled();
     expect(submarineServiceMock.updateSubmarine).not.toHaveBeenCalled();
   }, 30000);
+
+  it('should format submarine class values for display', () => {
+    const fixture = TestBed.createComponent(SubmarineForm);
+    const component = fixture.componentInstance;
+
+    expect(component.formatOption('LOS_ANGELES')).toBe('LOS ANGELES');
+    expect(component.formatOption('DELTA_IV')).toBe('DELTA IV');
+    expect(component.formatOption('VICTOR_III')).toBe('VICTOR III');
+    expect(component.formatOption('OHIO')).toBe('OHIO');
+  }, 30000);
+
+  it('should show the fallback message when submarine creation fails without a backend message', () => {
+    submarineServiceMock.createSubmarine.mockReturnValue(
+      throwError(() => new Error('Network error')),
+    );
+
+    const fixture = TestBed.createComponent(SubmarineForm);
+    const component = fixture.componentInstance;
+
+    component.form.setValue({
+      name: '  USS Ohio  ',
+      type: 'SSBN',
+      submarineClass: 'OHIO',
+      nation: '  USA  ',
+      status: 'ACTIVE',
+      submarineRole: 'SSBN',
+    });
+
+    submarineServiceMock.createSubmarine.mockClear();
+    snackBarMock.open.mockClear();
+    routerMock.navigate.mockClear();
+
+    component.save();
+
+    expect(component.saving()).toBe(false);
+
+    expect(snackBarMock.open).toHaveBeenCalledWith(
+      'Unable to save submarine.',
+      'Close',
+      { duration: 6000 },
+    );
+
+    expect(routerMock.navigate).not.toHaveBeenCalled();
+  }, 30000);
 });
