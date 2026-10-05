@@ -319,4 +319,101 @@ describe('SubmarineList', () => {
       component.submarines(),
     ).toEqual([]);
   });
+
+  it('should navigate to the selected submarine detail page', () => {
+    const fixture =
+      TestBed.createComponent(SubmarineList);
+
+    const component =
+      fixture.componentInstance;
+
+    routerMock.navigate.mockClear();
+
+    component.openSubmarine(submarines[1]);
+
+    expect(
+      routerMock.navigate,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      routerMock.navigate,
+    ).toHaveBeenCalledWith([
+      '/submarines',
+      submarines[1].id,
+    ]);
+  });
+
+  it('should navigate to the submarine creation page', () => {
+    const fixture =
+      TestBed.createComponent(SubmarineList);
+
+    const component =
+      fixture.componentInstance;
+
+    routerMock.navigate.mockClear();
+
+    component.createSubmarine();
+
+    expect(
+      routerMock.navigate,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      routerMock.navigate,
+    ).toHaveBeenCalledWith([
+      '/submarines/new',
+    ]);
+  });
+
+  it('should return the corresponding CSS class for each submarine status', () => {
+    const fixture =
+      TestBed.createComponent(SubmarineList);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.statusClass('ACTIVE'),
+    ).toBe('submarine-status-active');
+
+    expect(
+      component.statusClass('REFIT'),
+    ).toBe('submarine-status-refit');
+
+    expect(
+      component.statusClass('DAMAGED'),
+    ).toBe('submarine-status-damaged');
+
+    expect(
+      component.statusClass('RETIRED'),
+    ).toBe('submarine-status-retired');
+  });
+
+  it('should fall back to ALL when the status query param is invalid', () => {
+    activatedRouteMock.snapshot.queryParamMap.get.mockReturnValue(
+      'UNKNOWN',
+    );
+
+    const fixture =
+      TestBed.createComponent(SubmarineList);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.selectedStatus(),
+    ).toBe('ALL');
+
+    expect(
+      submarineServiceMock.getSubmarines,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      component.submarines(),
+    ).toEqual(submarines);
+
+    expect(
+      component.allSubmarines(),
+    ).toEqual(submarines);
+  });
 });
