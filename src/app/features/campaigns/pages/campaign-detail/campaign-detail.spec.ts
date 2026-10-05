@@ -2,13 +2,15 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
 import { CampaignDetail } from './campaign-detail';
 import { CampaignService } from '../../data-access/campaign.service';
 
 import { CampaignDetails } from '../../models/campaign.model';
 import { CampaignStatistics } from '../../models/campaign-statistics.model';
+
+import { CampaignSimulationResult } from '../../models/campaign-simulation.model';
 
 describe('CampaignDetail', () => {
   const campaign: CampaignDetails = {
@@ -427,10 +429,22 @@ describe('CampaignDetail', () => {
       .spyOn(window, 'confirm')
       .mockReturnValue(true);
 
+    const simulationResult: CampaignSimulationResult = {
+      campaignId: 1,
+      campaignName: 'Test Campaign',
+      executedAt: '2026-10-01T12:00:00',
+      progress: {
+        totalPatrols: 2,
+        completedPatrols: 2,
+        pendingPatrols: 0,
+        completionPercentage: 100,
+        completed: true,
+      },
+      patrolResults: [],
+    };
+
     campaignServiceMock.simulateCampaign.mockReturnValue(
-      of({
-        id: 99,
-      }),
+      of(simulationResult),
     );
 
     const fixture =
@@ -444,9 +458,7 @@ describe('CampaignDetail', () => {
     confirmSpy.mockReturnValue(true);
 
     campaignServiceMock.simulateCampaign.mockReturnValue(
-      of({
-        id: 99,
-      }),
+      of(simulationResult),
     );
 
     campaignServiceMock.getCampaignStatistics.mockReturnValue(
@@ -472,6 +484,10 @@ describe('CampaignDetail', () => {
     ).toBe(false);
 
     expect(
+      component.simulationResult(),
+    ).toEqual(simulationResult);
+
+    expect(
       campaignServiceMock.getCampaignStatistics,
     ).toHaveBeenCalledWith(1);
 
@@ -489,7 +505,13 @@ describe('CampaignDetail', () => {
 
     expect(
       snackBarMock.open,
-    ).toHaveBeenCalled();
+    ).toHaveBeenCalledWith(
+      'Campaign simulation completed successfully.',
+      'Close',
+      {
+        duration: 5000,
+      },
+    );
 
     confirmSpy.mockRestore();
   }, 30000);
@@ -644,7 +666,13 @@ describe('CampaignDetail', () => {
 
     expect(
       snackBarMock.open,
-    ).toHaveBeenCalled();
+    ).toHaveBeenCalledWith(
+      'Simulation failed.',
+      'Close',
+      {
+        duration: 7000,
+      },
+    );
 
     expect(
       campaignServiceMock.getCampaignTimeline,
@@ -854,5 +882,334 @@ describe('CampaignDetail', () => {
     expect(
       component.missionOutcomeClass(null),
     ).toBe('mission-outcome-neutral');
+  }, 30000);
+
+  it('should not delete when the campaign failed to load', () => {
+    campaignServiceMock.getCampaignDetails.mockReturnValue(
+      throwError(() => new Error('Failed to load campaign')),
+    );
+
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.campaign(),
+    ).toBeNull();
+
+    expect(
+      component.loadError(),
+    ).toBe(true);
+
+    const confirmSpy = vi.spyOn(window, 'confirm');
+
+    campaignServiceMock.deleteCampaign.mockClear();
+
+    component.deleteCampaign();
+
+    expect(
+      confirmSpy,
+    ).not.toHaveBeenCalled();
+
+    expect(
+      campaignServiceMock.deleteCampaign,
+    ).not.toHaveBeenCalled();
+
+    expect(
+      component.deleting(),
+    ).toBe(false);
+
+    confirmSpy.mockRestore();
+  }, 30000);
+
+  it('should prevent duplicate deletion while a deletion is in progress', () => {
+    const deleteSubject = new Subject<void>();
+
+    campaignServiceMock.deleteCampaign.mockReturnValue(
+      deleteSubject.asObservable(),
+    );
+
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    const confirmSpy = vi
+      .spyOn(window, 'confirm')
+      .mockReturnValue(true);
+
+    campaignServiceMock.deleteCampaign.mockClear();
+
+    component.deleteCampaign();
+
+    expect(
+      component.deleting(),
+    ).toBe(true);
+
+    expect(
+      confirmSpy,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      campaignServiceMock.deleteCampaign,
+    ).toHaveBeenCalledTimes(1);
+
+    component.deleteCampaign();
+
+    expect(
+      confirmSpy,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      campaignServiceMock.deleteCampaign,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      component.deleting(),
+    ).toBe(true);
+
+    deleteSubject.next();
+    deleteSubject.complete();
+
+    expect(
+      component.deleting(),
+    ).toBe(false);
+
+    confirmSpy.mockRestore();
+  }, 30000);
+
+  it('should show the backend error message when campaign deletion fails', () => {
+    campaignServiceMock.deleteCampaign.mockReturnValue(
+      throwError(() => ({
+        error: {
+          message: 'Campaign cannot be deleted.',
+        },
+      })),
+    );
+
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    const confirmSpy = vi
+      .spyOn(window, 'confirm')
+      .mockReturnValue(true);
+
+    campaignServiceMock.deleteCampaign.mockClear();
+    snackBarMock.open.mockClear();
+    routerMock.navigate.mockClear();
+
+    component.deleteCampaign();
+
+    expect(
+      confirmSpy,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      campaignServiceMock.deleteCampaign,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      component.deleting(),
+    ).toBe(false);
+
+    expect(
+      snackBarMock.open,
+    ).toHaveBeenCalledWith(
+      'Campaign cannot be deleted.',
+      'Close',
+      {
+        duration: 6000,
+      },
+    );
+
+    expect(
+      routerMock.navigate,
+    ).not.toHaveBeenCalled();
+
+    confirmSpy.mockRestore();
+  }, 30000);
+
+  it('should show the fallback message when campaign deletion fails without a backend message', () => {
+    campaignServiceMock.deleteCampaign.mockReturnValue(
+      throwError(() => new Error('Network error')),
+    );
+
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    const confirmSpy = vi
+      .spyOn(window, 'confirm')
+      .mockReturnValue(true);
+
+    campaignServiceMock.deleteCampaign.mockClear();
+    snackBarMock.open.mockClear();
+    routerMock.navigate.mockClear();
+
+    component.deleteCampaign();
+
+    expect(
+      confirmSpy,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      campaignServiceMock.deleteCampaign,
+    ).toHaveBeenCalledTimes(1);
+
+    expect(
+      component.deleting(),
+    ).toBe(false);
+
+    expect(
+      snackBarMock.open,
+    ).toHaveBeenCalledWith(
+      'Unable to delete campaign.',
+      'Close',
+      {
+        duration: 6000,
+      },
+    );
+
+    expect(
+      routerMock.navigate,
+    ).not.toHaveBeenCalled();
+
+    confirmSpy.mockRestore();
+  }, 30000);
+
+  it('should show the campaign load error while keeping the other sections loaded', () => {
+    campaignServiceMock.getCampaignDetails.mockReturnValue(
+      throwError(() => new Error('Failed to load campaign')),
+    );
+
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.loading(),
+    ).toBe(false);
+
+    expect(
+      component.loadError(),
+    ).toBe(true);
+
+    expect(
+      component.campaign(),
+    ).toBeNull();
+
+    expect(
+      campaignServiceMock.getCampaignStatistics,
+    ).toHaveBeenCalledWith(1);
+
+    expect(
+      component.statisticsError(),
+    ).toBe(false);
+
+    expect(
+      component.statisticsLoading(),
+    ).toBe(false);
+
+    expect(
+      component.statistics(),
+    ).not.toBeNull();
+
+    expect(
+      campaignServiceMock.getCampaignTimeline,
+    ).toHaveBeenCalledWith(1);
+
+    expect(
+      component.timelineError(),
+    ).toBe(false);
+
+    expect(
+      component.timelineLoading(),
+    ).toBe(false);
+
+    expect(
+      campaignServiceMock.getCampaignExecutions,
+    ).toHaveBeenCalledWith(
+      1,
+      0,
+      10,
+    );
+
+    expect(
+      component.executionsError(),
+    ).toBe(false);
+
+    expect(
+      component.executionsLoading(),
+    ).toBe(false);
+  }, 30000);
+
+  it('should show the statistics load error while keeping the campaign loaded', () => {
+    campaignServiceMock.getCampaignStatistics.mockReturnValue(
+      throwError(() => new Error('Failed to load statistics')),
+    );
+
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.statisticsLoading(),
+    ).toBe(false);
+
+    expect(
+      component.statisticsError(),
+    ).toBe(true);
+
+    expect(
+      component.statistics(),
+    ).toBeNull();
+
+    expect(
+      component.loadError(),
+    ).toBe(false);
+
+    expect(
+      component.campaign(),
+    ).not.toBeNull();
+  }, 30000);
+
+  it('should show the timeline load error when loading the timeline fails', () => {
+    campaignServiceMock.getCampaignTimeline.mockReturnValue(
+      throwError(() => new Error('Failed to load timeline')),
+    );
+
+    const fixture =
+      TestBed.createComponent(CampaignDetail);
+
+    const component =
+      fixture.componentInstance;
+
+    expect(
+      component.timelineLoading(),
+    ).toBe(false);
+
+    expect(
+      component.timelineError(),
+    ).toBe(true);
+
+    expect(
+      component.loadError(),
+    ).toBe(false);
+
+    expect(
+      component.campaign(),
+    ).not.toBeNull();
   }, 30000);
 });
